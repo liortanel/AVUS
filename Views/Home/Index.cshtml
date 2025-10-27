@@ -1,8 +1,80 @@
 ﻿@{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Inicio";
 }
 
-<div>
-    <h1>Index</h1>
-    <p>Bienvenidos al sitio web de NombreProyecto</p>
+<div class="welcome-banner">
+    <h1>¡Bienvenido!</h1>
+    <p>Estamos aquí para ayudarte a cuidar tu salud y bienestar</p>
+</div>
+
+<div class="cards-grid">
+    <!-- Card: Próximo Evento -->
+    <div class="event-card">
+        <div class="card-header">
+            <i class="fas fa-calendar-check card-header-icon"></i>
+            <span>Próximo Evento</span>
+        </div>
+        <div class="card-content">
+            <h3>Consulta médica</h3>
+            <p><i class="fas fa-clock"></i> Hoy a las 10:00 AM</p>
+            <p><i class="fas fa-map-marker-alt"></i> Clínica Central</p>
+        </div>
+        <div class="card-footer">
+            <i class="fas fa-info-circle"></i> No olvides traer tu DNI
+        </div>
+    </div>
+
+    <!-- Card: Próximo Medicamento -->
+    <div class="medication-card">
+        <div class="card-header">
+            <i class="fas fa-pills card-header-icon"></i>
+            <span>Próximo Medicamento</span>
+        </div>
+        <div class="card-content">
+            <h3>Paracetamol 500mg</h3>
+            <p><i class="fas fa-clock"></i> En 2 horas</p>
+            <p><i class="fas fa-droplet"></i> Dosis: 1 comprimido</p>
+        </div>
+        <div class="card-footer">
+            <i class="fas fa-exclamation-triangle"></i> Tomar con las comidas
+        </div>
+    </div>
+</div>
+
+<!-- Botones de Acción -->
+<div class="action-buttons">
+    <a href="/Familia" class="action-btn">
+        <div class="action-btn-icon">
+            <i class="fas fa-users"></i>
+        </div>
+        <span class="action-btn-label">Familia</span>
+    </a>
+
+    <a href="/Salud" class="action-btn">
+        <div class="action-btn-icon">
+            <i class="fas fa-heartbeat"></i>
+        </div>
+        <span class="action-btn-label">Salud</span>
+    </a>
+
+    <a href="/Calendario" class="action-btn">
+        <div class="action-btn-icon">
+            <i class="fas fa-calendar-alt"></i>
+        </div>
+        <span class="action-btn-label">Calendario</span>
+    </a>
+
+    <a href="/Home/Tutoriales" class="action-btn">
+        <div class="action-btn-icon">
+            <i class="fas fa-graduation-cap"></i>
+        </div>
+        <span class="action-btn-label">Tutoriales</span>
+    </a>
+
+    <a href="/Emergencia" class="action-btn action-btn-emergency">
+        <div class="action-btn-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <span class="action-btn-label">Emergencia</span>
+    </a>
 </div>

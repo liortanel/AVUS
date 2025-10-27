@@ -17,4 +17,32 @@ public class HomeController : Controller
     {
         return View();
     }
+
+    public IActionResult Login()
+    {
+        return View();
+    }
+
+    public IActionResult Register()
+    {
+        return View();
+    }
+
+    [HttpPost]
+    public IActionResult Register(string dni, string nombre, string apellido, string genero, string nacionalidad, string password, string repetirPassword)
+    {
+        // Aquí agregarás la lógica de registro
+        return RedirectToAction("Index");
+    }
+
+    public IActionResult Tutoriales()
+    {
+        return View();
+    }
+
+    public IActionResult Tutorial(string app)
+    {
+        ViewData["App"] = app;
+        return View();
+    }
 }

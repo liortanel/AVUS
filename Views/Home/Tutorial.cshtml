@@ -1,0 +1,123 @@
+@{
+    ViewData["Title"] = "Tutorial - " + ViewData["App"];
+    string app = ViewData["App"]?.ToString() ?? "WhatsApp";
+}
+
+<div class="tutorial-breadcrumb">
+    <a href="/Home/Tutoriales"><i class="fas fa-arrow-left"></i> Volver a Tutoriales</a>
+    <span>/</span>
+    <span>@app</span>
+</div>
+
+<div class="tutorial-content">
+    <div class="tutorial-header">
+        <div class="tutorial-app-icon">
+            @if (app == "WhatsApp")
+            {
+                <i class="fab fa-whatsapp"></i>
+            }
+            else if (app == "Instagram")
+            {
+                <i class="fab fa-instagram"></i>
+            }
+            else if (app == "YouTube")
+            {
+                <i class="fab fa-youtube"></i>
+            }
+            else if (app == "Facebook")
+            {
+                <i class="fab fa-facebook"></i>
+            }
+            else if (app == "Netflix")
+            {
+                <img src="https://img.icons8.com/ios11/512/FFFFFF/netflix--v2.png" alt="Netflix" style="width: 80px; height: auto;" />
+            }
+            else if (app == "Spotify")
+            {
+                <i class="fab fa-spotify"></i>
+            }
+        </div>
+        <h1>Tutorial de @app</h1>
+        <p>Aprende a usar @app de forma sencilla paso a paso</p>
+    </div>
+
+    <!-- Video Tutorial -->
+    <div class="tutorial-video">
+        <h2><i class="fas fa-video"></i> Video Tutorial</h2>
+        <div class="video-container">
+            <iframe 
+                src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
+                frameborder="0" 
+                allowfullscreen>
+            </iframe>
+        </div>
+    </div>
+
+    <!-- Guía Paso a Paso -->
+    <div class="tutorial-steps">
+        <h2><i class="fas fa-list-ol"></i> Guía Paso a Paso</h2>
+        
+        <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <h3>Paso 1: Instala la aplicación</h3>
+                <p>Busca @app en la tienda de aplicaciones de tu dispositivo y presiona "Instalar"</p>
+                <div class="step-image">
+                    <div class="placeholder-image">
+                        <i class="fas fa-mobile-alt"></i>
+                        <p>Imagen del paso 1</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <h3>Paso 2: Crea tu cuenta</h3>
+                <p>Abre la aplicación y sigue las instrucciones en pantalla para crear una cuenta nueva</p>
+                <div class="step-image">
+                    <div class="placeholder-image">
+                        <i class="fas fa-user-plus"></i>
+                        <p>Imagen del paso 2</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <h3>Paso 3: Personaliza tu perfil</h3>
+                <p>Agrega una foto de perfil y completa tu información personal</p>
+                <div class="step-image">
+                    <div class="placeholder-image">
+                        <i class="fas fa-id-card"></i>
+                        <p>Imagen del paso 3</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="step">
+            <div class="step-number">4</div>
+            <div class="step-content">
+                <h3>Paso 4: Empieza a usar</h3>
+                <p>¡Listo! Ya puedes comenzar a usar todas las funciones de @app</p>
+                <div class="step-image">
+                    <div class="placeholder-image">
+                        <i class="fas fa-check-circle"></i>
+                        <p>Imagen del paso 4</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botón de ayuda -->
+    <div class="tutorial-help">
+        <p><i class="fas fa-question-circle"></i> ¿Necesitas más ayuda?</p>
+        <a href="/Emergencia" class="btn-help">Contactar Soporte</a>
+    </div>
+</div>
+

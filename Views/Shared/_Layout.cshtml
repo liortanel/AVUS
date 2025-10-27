@@ -4,21 +4,117 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - NombreProyecto</title>
+    <title>@ViewData["Title"] - AVUS</title>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
 
 <body>
-    <header>
-        NombreProyecto
-    </header>
+    @{
+        bool hideNavbar = ViewData["HideNavbar"] as bool? ?? false;
+    }
+
+    @if (!hideNavbar)
+    {
+        <!-- Overlay para el sidebar -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Sidebar Menu -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2>MENÚ</h2>
+                <button class="sidebar-close-btn" id="sidebarCloseBtn">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-menu-item">
+                    <a href="/" class="sidebar-menu-link">
+                        <i class="fas fa-home sidebar-menu-icon"></i>
+                        <span>Inicio</span>
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="/Familia" class="sidebar-menu-link">
+                        <i class="fas fa-users sidebar-menu-icon"></i>
+                        <span>Familia</span>
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="/Salud" class="sidebar-menu-link">
+                        <i class="fas fa-heartbeat sidebar-menu-icon"></i>
+                        <span>Salud</span>
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="/Calendario" class="sidebar-menu-link">
+                        <i class="fas fa-calendar-alt sidebar-menu-icon"></i>
+                        <span>Calendario</span>
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="/Home/Tutoriales" class="sidebar-menu-link">
+                        <i class="fas fa-graduation-cap sidebar-menu-icon"></i>
+                        <span>Tutoriales</span>
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="/Emergencia" class="sidebar-menu-link">
+                        <i class="fas fa-exclamation-triangle sidebar-menu-icon"></i>
+                        <span>Emergencia</span>
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="/MiCuenta" class="sidebar-menu-link">
+                        <i class="fas fa-user-circle sidebar-menu-icon"></i>
+                        <span>Mi Cuenta</span>
+                    </a>
+                </li>
+                <li class="sidebar-menu-item">
+                    <a href="/CerrarSesion" class="sidebar-menu-link">
+                        <i class="fas fa-sign-out-alt sidebar-menu-icon"></i>
+                        <span>Cerrar Sesión</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Header -->
+        <header>
+            <div class="header-content">
+                <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+                <div class="header-center">
+                    <a href="/" class="site-logo">
+                        <img src="/img/AVUS.svg" alt="AVUS">
+                    </a>
+                </div>
+                <div class="header-right">
+                    <button class="notification-btn" id="notificationBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+                    <button class="avatar-btn" id="avatarBtn">
+                        <svg class="avatar-img" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="50" cy="50" r="50" fill="#34CEC1"/>
+                            <circle cx="50" cy="35" r="15" fill="white"/>
+                            <ellipse cx="50" cy="85" rx="20" ry="15" fill="white"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+    }
 
     <main role="main">
         @RenderBody()
     </main>
 
     <footer>
-        &copy; @DateTime.Now.Year - NombreProyecto
+        &copy; @DateTime.Now.Year - AVUS
     </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
