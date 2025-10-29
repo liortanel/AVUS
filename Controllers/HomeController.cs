@@ -22,6 +22,13 @@ public class HomeController : Controller
     {
         return View();
     }
+
+    [HttpPost]
+    public IActionResult CompletarLogin(string DNI, string contraseña)
+    {
+        ViewBag.Exito = BD.VerificarIniciarSesion(DNI, contraseña);
+        return RedirectToAction("Index");
+    }
     public IActionResult Register()
     {
         return View();

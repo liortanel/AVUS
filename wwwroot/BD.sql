@@ -8,12 +8,12 @@ CREATE TABLE Avu (
   avu_id INT IDENTITY(1,1) PRIMARY KEY,
   nombre NVARCHAR(100) NOT NULL,
   apellido NVARCHAR(100) NOT NULL,
-  password_hash NVARCHAR(255) NOT NULL
-  dni NVARCHAR(30) NOT NULL,
+  password_hash NVARCHAR(255) NOT NULL,
+  dni NVARCHAR(30) NOT NULL UNIQUE,
   genero NVARCHAR(20) NOT NULL,
   nacimiento DATE NOT NULL,
   nacionalidad NVARCHAR(50) NOT NULL,
-  email NVARCHAR(255) UNIQUE,
+  email NVARCHAR(255),
   telefono NVARCHAR(50),
   foto_url NVARCHAR(500)
 );
@@ -70,4 +70,9 @@ CREATE TABLE Emergencia (
   avu_id INT NOT NULL FOREIGN KEY REFERENCES Avu(avu_id) ON DELETE CASCADE,
   contacto_principal NVARCHAR(50)
 );
+GO
+
+CREATE UNIQUE INDEX IX_Avu_Email
+ON Avu (email)
+WHERE email IS NOT NULL;
 GO
