@@ -8,10 +8,11 @@ CREATE TABLE Avu (
   avu_id INT IDENTITY(1,1) PRIMARY KEY,
   nombre NVARCHAR(100) NOT NULL,
   apellido NVARCHAR(100) NOT NULL,
+  password_hash NVARCHAR(255) NOT NULL
   dni NVARCHAR(30) NOT NULL,
-  sexo NVARCHAR(20),
-  nacimiento DATE,
-  nacionalidad NVARCHAR(50),
+  genero NVARCHAR(20) NOT NULL,
+  nacimiento DATE NOT NULL,
+  nacionalidad NVARCHAR(50) NOT NULL,
   email NVARCHAR(255) UNIQUE,
   telefono NVARCHAR(50),
   foto_url NVARCHAR(500)

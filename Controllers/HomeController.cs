@@ -22,16 +22,15 @@ public class HomeController : Controller
     {
         return View();
     }
-
     public IActionResult Register()
     {
         return View();
     }
 
     [HttpPost]
-    public IActionResult Register(string dni, string nombre, string apellido, string genero, string nacionalidad, string password, string repetirPassword)
+    public IActionResult CompletarRegistro(string nombre, string apellido, string contraseña, string repetirContraseña, string DNI, string genero, DateTime nacimiento, string nacionalidad)
     {
-        // Aquí agregarás la lógica de registro
+        BD.AgregarAvu(nombre, apellido, contraseña, DNI, genero, nacimiento, nacionalidad);
         return RedirectToAction("Index");
     }
 

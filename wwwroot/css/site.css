@@ -488,6 +488,7 @@ footer {
 .form-group input:focus,
 .form-group select:focus {
   border-color: #34CEC1 !important;
+  outline: none !important;
 }
 
 
