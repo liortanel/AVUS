@@ -14,15 +14,6 @@ public static class BD
     }
     public static void AgregarAvu(string nombre, string apellido, string contraseña, string DNI, string genero, DateTime nacimiento, string nacionalidad)
     {
-        string dniNormalizado = DNI.Trim().ToLowerInvariant();
-        using (SqlConnection connection = ObtenerConexion())
-        {
-            var existe = connection.QuerySingleOrDefault("SELECT 1 FROM Avu WHERE LOWER(LTRIM(RTRIM(dni))) = @DNI", new { DNI = dniNormalizado });
-            if (existe != null)
-            {
-                throw new Exception("El DNI ya está registrado.");
-            }
-        }
         string passwordHash = BCrypt.Net.BCrypt.HashPassword(contraseña);
         using (SqlConnection connection = ObtenerConexion())
         {
@@ -32,7 +23,7 @@ public static class BD
                 nombre = nombre,
                 apellido = apellido,
                 passwordHash = passwordHash,
-                DNI = dniNormalizado,
+                dni = DNI,
                 genero = genero,
                 nacimiento = nacimiento,
                 nacionalidad = nacionalidad
@@ -41,17 +32,15 @@ public static class BD
     }
     public static bool VerificarIniciarSesion(string DNI, string contraseña)
     {
-        string dniNormalizado = DNI.Trim().ToLowerInvariant();
         using (SqlConnection connection = ObtenerConexion())
         {
-            var query = @"SELECT dni, password_hash FROM Avu WHERE LOWER(LTRIM(RTRIM(dni))) = @DNI";
-            var usuario = connection.QuerySingleOrDefault(query, new { DNI = dniNormalizado });
-            if (usuario == null || contraseña == null || usuario.password_hash == null)
+            var query = @"SELECT dni FROM Avu WHERE dni = @DNI";
+            var usuario = connection.QuerySingleOrDefault<dynamic>(query, new { DNI = DNI });
+            if (usuario = null)
             {
                 return false;
             }
-            string hash = (string)usuario.password_hash;
-            bool contraseñaValida = BCrypt.Net.BCrypt.Verify(contraseña, hash);
+            bool contraseñaValida = BCrypt.Net.BCrypt.Verify(contraseña, usuario.password_hash);
             return contraseñaValida;
         }
     }

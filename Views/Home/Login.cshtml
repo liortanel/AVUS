@@ -3,21 +3,12 @@
     ViewData["HideNavbar"] = true;
 }
 
-@if (TempData["LoginError"] != null)
-{
-    <div id="login-error" class="alert alert-danger shadow rounded" style="font-weight:600;font-size:1.1em;letter-spacing:1px;border:1px solid #dc3545;text-align:center;transition:opacity 0.5s;">@TempData["LoginError"]</div>
-}
-
 <div class="login-container">
     <div class="login-card">
         <div class="login-logo">
             <img src="/img/AVUS.svg" alt="AVUS" />
         </div>
-        <form class="login-form" method="post" action="/Home/CompletarLogin">
-            @if (TempData["LoginError"] != null) {
-                TempData.Keep("LoginError");
-                <div class="alert alert-danger">@TempData["LoginError"]</div>
-            }
+        <form class="login-form">
             <h2>Iniciar Sesión</h2>
             <div class="form-group">
                 <label for="dni">DNI</label>
@@ -55,16 +46,6 @@
             passwordInput.type = 'password';
             icon.classList.remove('fa-eye-slash');
             icon.classList.add('fa-eye');
-        }
-    });
-    // Desaparecer el cartel de error después de 3 segundos
-    window.addEventListener('DOMContentLoaded', function() {
-        var errorDiv = document.getElementById('login-error');
-        if (errorDiv) {
-            setTimeout(function() {
-                errorDiv.style.opacity = 0;
-                setTimeout(function(){ errorDiv.style.display = 'none'; }, 500);
-            }, 3000);
         }
     });
 </script>
