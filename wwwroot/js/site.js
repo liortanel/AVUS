@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Avatar click to navigate to account
     if (avatarBtn) {
         avatarBtn.addEventListener('click', () => {
-            window.location.href = '/MiCuenta';
+            window.location.href = '/Home/Perfil';
         });
     }
 

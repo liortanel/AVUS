@@ -12,6 +12,8 @@
 <body>
     @{
         bool hideNavbar = ViewData["HideNavbar"] as bool? ?? false;
+        var httpContext = Context.RequestServices.GetService(typeof(Microsoft.AspNetCore.Http.IHttpContextAccessor)) as Microsoft.AspNetCore.Http.IHttpContextAccessor;
+        bool isLogged = httpContext?.HttpContext?.Session?.GetString("UserDNI") != null;
     }
 
     @if (!hideNavbar)
@@ -65,17 +67,29 @@
                     </a>
                 </li>
                 <li class="sidebar-menu-item">
-                    <a href="/MiCuenta" class="sidebar-menu-link">
+                    <a href="/Home/Perfil" class="sidebar-menu-link">
                         <i class="fas fa-user-circle sidebar-menu-icon"></i>
                         <span>Mi Cuenta</span>
                     </a>
                 </li>
-                <li class="sidebar-menu-item">
-                    <a href="/CerrarSesion" class="sidebar-menu-link">
-                        <i class="fas fa-sign-out-alt sidebar-menu-icon"></i>
-                        <span>Cerrar Sesión</span>
-                    </a>
-                </li>
+                @if (isLogged)
+                {
+                    <li class="sidebar-menu-item">
+                        <a href="/Home/CerrarSesion" class="sidebar-menu-link">
+                            <i class="fas fa-sign-out-alt sidebar-menu-icon"></i>
+                            <span>Cerrar Sesión</span>
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="sidebar-menu-item">
+                        <a href="/Home/Login" class="sidebar-menu-link">
+                            <i class="fas fa-sign-in-alt sidebar-menu-icon"></i>
+                            <span>Iniciar Sesión</span>
+                        </a>
+                    </li>
+                }
             </ul>
         </nav>
 
@@ -98,11 +112,7 @@
                         <span class="notification-badge">3</span>
                     </button>
                     <button class="avatar-btn" id="avatarBtn">
-                        <svg class="avatar-img" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="50" cy="50" r="50" fill="#34CEC1"/>
-                            <circle cx="50" cy="35" r="15" fill="white"/>
-                            <ellipse cx="50" cy="85" rx="20" ry="15" fill="white"/>
-                        </svg>
+                        <i class="fas fa-user-circle avatar-img"></i>
                     </button>
                 </div>
             </div>

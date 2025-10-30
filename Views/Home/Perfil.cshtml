@@ -1,0 +1,134 @@
+@model Dictionary<string, object>
+@{
+    ViewData["Title"] = "Perfil";
+}
+
+<div class="welcome-banner">
+    <h1>
+        <i class="fas fa-user-circle"></i>
+        @Model["nombre"] @Model["apellido"]
+    </h1>
+    <p>
+        <i class="fas fa-id-card"></i>
+        DNI: @Model["dni"]
+    </p>
+    </div>
+
+<div class="cards-grid">
+    <section class="event-card">
+        <div class="card-header">
+            <i class="fas fa-address-card card-header-icon"></i>
+            <span>Datos personales</span>
+        </div>
+        <div class="card-content">
+            <p>
+                <i class="fas fa-venus-mars" style="margin-right:0.15rem;"></i>
+                <strong>Género:</strong> @Model["genero"]
+            </p>
+            <p>
+                <i class="fas fa-cake-candles" style="margin-right:0.25rem;"></i>
+                <strong>Nacimiento:</strong> @(Model["nacimiento"] != null ? Convert.ToDateTime(Model["nacimiento"]).ToString("dd/MM/yyyy") : "")
+            </p>
+            <p>
+                <i class="fas fa-flag" style="margin-right:0.25rem;"></i>
+                <strong>Nacionalidad:</strong> @Model["nacionalidad"]
+            </p>
+            <hr />
+            @{
+                var emailVal = Model.GetValueOrDefault("email")?.ToString();
+                var telVal = Model.GetValueOrDefault("telefono")?.ToString();
+                bool tieneEmail = !string.IsNullOrWhiteSpace(emailVal);
+                bool tieneTel = !string.IsNullOrWhiteSpace(telVal);
+            }
+
+            <!-- Email -->
+            @if (tieneEmail)
+            {
+                <div style="display:flex; flex-direction:column; gap:0.5rem; margin-top:0.75rem;">
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:0.5rem;">
+                        <div style="display:flex; align-items:center; gap:0.5rem;">
+                            <i class="fas fa-envelope" style="color:#0760BF"></i>
+                            <span><strong>Email:</strong> @emailVal</span>
+                        </div>
+                        <div style="display:flex; gap:0.5rem;">
+                            <button type="button" class="btn-login" style="width:auto; padding:0.35rem 0.6rem;" onclick="toggleEdit('email')">Editar</button>
+                            <form method="post" action="/Home/EliminarEmail">
+                                <button type="submit" class="btn-login" style="background:#d9534f; width:auto; padding:0.35rem 0.6rem;">Borrar</button>
+                            </form>
+                        </div>
+                    </div>
+                    <form id="edit-email" method="post" action="/Home/ActualizarEmail" style="display:none; gap:0.5rem; align-items:center;">
+                        <i class="fas fa-envelope" style="color:#0760BF"></i>
+                        <input type="email" name="email" value="@emailVal" style="flex:1; padding:0.5rem; border:1px solid #ddd; border-radius:8px;" />
+                        <button type="submit" class="btn-login" style="width:auto; padding:0.5rem 0.75rem;">Guardar</button>
+                    </form>
+                </div>
+            }
+            else
+            {
+                <form method="post" action="/Home/ActualizarEmail" style="display:flex; gap:0.5rem; align-items:center; margin-top:0.75rem;">
+                    <i class="fas fa-envelope" style="color:#0760BF"></i>
+                    <input type="email" name="email" placeholder="Correo electrónico" value="" style="flex:1; padding:0.5rem; border:1px solid #ddd; border-radius:8px;" />
+                    <button type="submit" class="btn-login" style="width:auto; padding:0.5rem 0.75rem;">Guardar</button>
+                </form>
+            }
+
+            <!-- Teléfono -->
+            @if (tieneTel)
+            {
+                <div style="display:flex; flex-direction:column; gap:0.5rem; margin-top:0.75rem;">
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:0.5rem;">
+                        <div style="display:flex; align-items:center; gap:0.5rem;">
+                            <i class="fas fa-phone" style="color:#0760BF"></i>
+                            <span><strong>Teléfono:</strong> @telVal</span>
+                        </div>
+                        <div style="display:flex; gap:0.5rem;">
+                            <button type="button" class="btn-login" style="width:auto; padding:0.35rem 0.6rem;" onclick="toggleEdit('telefono')">Editar</button>
+                            <form method="post" action="/Home/EliminarTelefono">
+                                <button type="submit" class="btn-login" style="background:#d9534f; width:auto; padding:0.35rem 0.6rem;">Borrar</button>
+                            </form>
+                        </div>
+                    </div>
+                    <form id="edit-telefono" method="post" action="/Home/ActualizarTelefono" style="display:none; gap:0.5rem; align-items:center;">
+                        <i class="fas fa-phone" style="color:#0760BF"></i>
+                        <input type="text" name="telefono" value="@telVal" style="flex:1; padding:0.5rem; border:1px solid #ddd; border-radius:8px;" />
+                        <button type="submit" class="btn-login" style="width:auto; padding:0.5rem 0.75rem;">Guardar</button>
+                    </form>
+                </div>
+            }
+            else
+            {
+                <form method="post" action="/Home/ActualizarTelefono" style="display:flex; gap:0.5rem; align-items:center; margin-top:0.75rem;">
+                    <i class="fas fa-phone" style="color:#0760BF"></i>
+                    <input type="text" name="telefono" placeholder="Número de teléfono" value="" style="flex:1; padding:0.5rem; border:1px solid #ddd; border-radius:8px;" />
+                    <button type="submit" class="btn-login" style="width:auto; padding:0.5rem 0.75rem;">Guardar</button>
+                </form>
+            }
+        </div>
+        <div class="card-footer">
+            <i class="fas fa-shield-alt"></i>
+            Tus datos están protegidos
+        </div>
+    </section>
+</div>
+
+<script>
+    function toggleEdit(campo) {
+        var formId = campo === 'email' ? 'edit-email' : 'edit-telefono';
+        var form = document.getElementById(formId);
+        if (form) {
+            form.style.display = (form.style.display === 'none' || form.style.display === '') ? 'flex' : 'none';
+        }
+    }
+</script>
+
+<div class="action-buttons">
+    <a href="/" class="action-btn">
+        <i class="fas fa-home action-btn-icon"></i>
+        <span class="action-btn-label">Volver al inicio</span>
+    </a>
+    <a href="/Home/Perfil" class="action-btn">
+        <i class="fas fa-rotate-right action-btn-icon"></i>
+        <span class="action-btn-label">Actualizar</span>
+    </a>
+</div>

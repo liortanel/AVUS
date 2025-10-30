@@ -8,13 +8,17 @@
         <div class="register-logo">
             <img src="/img/AVUS.svg" alt="AVUS" />
         </div>
-        <form class="register-form" method="post" action="/Home/CompletarRegistro">
+        @if(ViewBag.Error != null) {
+            <div class="alert alert-danger" style="text-align:center;">@ViewBag.Error</div>
+        }
+        <div id="clientAlert" class="alert alert-danger" style="display:none; text-align:center;"></div>
+        <form id="registerForm" class="register-form" method="post" action="/Home/CompletarRegistro" novalidate>
             <h2>Crear Cuenta</h2>
             
             <!-- Datos Personales -->
             <div class="form-group">
                 <label for="dni">DNI</label>
-                <input type="text" id="dni" name="DNI" placeholder="Ej: 12345678" required />
+                    <input type="text" id="dni" name="DNI" placeholder="Ej: 12345678" required />
             </div>
 
             <div class="form-row">
@@ -127,15 +131,36 @@
         }
     });
 
-    // Validar que las contraseñas coincidan
-    document.querySelector('.register-form').addEventListener('submit', function(e) {
+    // Validación personalizada y sin alerts nativos del navegador
+    document.getElementById('registerForm').addEventListener('submit', function(e) {
+        const alertBox = document.getElementById('clientAlert');
+        const showError = (msg) => {
+            alertBox.textContent = msg;
+            alertBox.style.display = 'block';
+        };
+        alertBox.style.display = 'none';
+        alertBox.textContent = '';
+
+        const dni = document.getElementById('dni').value.trim();
+        const nombre = document.getElementById('nombre').value.trim();
+        const apellido = document.getElementById('apellido').value.trim();
+        const nacimiento = document.getElementById('nacimiento').value;
+        const genero = document.getElementById('genero').value;
+        const nacionalidad = document.getElementById('nacionalidad').value;
         const password = document.getElementById('password').value;
         const repetirPassword = document.getElementById('repetirPassword').value;
 
-        if (password !== repetirPassword) {
-            e.preventDefault();
-            alert('Las contraseñas no coinciden');
-        }
+        // Reglas básicas
+        if (!dni) { e.preventDefault(); return showError('El DNI es obligatorio.'); }
+        if (!/^\d{7,10}$/.test(dni)) { e.preventDefault(); return showError('El DNI debe tener 7 a 10 dígitos.'); }
+        if (!nombre) { e.preventDefault(); return showError('El nombre es obligatorio.'); }
+        if (!apellido) { e.preventDefault(); return showError('El apellido es obligatorio.'); }
+        if (!nacimiento) { e.preventDefault(); return showError('La fecha de nacimiento es obligatoria.'); }
+        if (!genero) { e.preventDefault(); return showError('Selecciona un género.'); }
+        if (!nacionalidad) { e.preventDefault(); return showError('Selecciona una nacionalidad.'); }
+        if (!password) { e.preventDefault(); return showError('La contraseña es obligatoria.'); }
+        if (password.length < 6) { e.preventDefault(); return showError('La contraseña debe tener al menos 6 caracteres.'); }
+        if (password !== repetirPassword) { e.preventDefault(); return showError('Las contraseñas no coinciden.'); }
     });
 </script>
 }
