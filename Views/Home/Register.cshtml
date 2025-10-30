@@ -3,6 +3,11 @@
     ViewData["HideNavbar"] = true;
 }
 
+@if (TempData["RegisterError"] != null)
+{
+    <div class="alert alert-danger">@TempData["RegisterError"]</div>
+}
+
 <div class="register-container">
     <div class="register-card">
         <div class="register-logo">
@@ -85,7 +90,7 @@
             </div>
 
             <div class="register-btn-group">
-                <button type="button" class="btn-back" onclick="window.history.back()">
+                <button type="button" class="btn-back" onclick="window.location.href='/Home/Login'">
                     <i class="fas fa-arrow-left"></i> Volver
                 </button>
                 <button type="submit" class="btn-register">Registrarse</button>
