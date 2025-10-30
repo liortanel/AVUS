@@ -8,7 +8,10 @@
         <div class="login-logo">
             <img src="/img/AVUS.svg" alt="AVUS" />
         </div>
-        <form class="login-form">
+        @if(ViewBag.Error != null) {
+            <div class="alert alert-danger" style="text-align:center;">@ViewBag.Error</div>
+        }
+        <form class="login-form" method="post" action="/Home/CompletarLogin">
             <h2>Iniciar Sesión</h2>
             <div class="form-group">
                 <label for="dni">DNI</label>
@@ -17,7 +20,7 @@
             <div class="form-group">
                 <label for="password">Contraseña</label>
                 <div class="password-input-wrapper">
-                    <input type="password" id="password" name="password" placeholder="••••••••" required />
+                    <input type="password" id="password" name="contraseña" placeholder="••••••••" required />
                     <button type="button" class="password-toggle" id="passwordToggle">
                         <i class="fas fa-eye"></i>
                     </button>

@@ -26,9 +26,15 @@ public class HomeController : Controller
     [HttpPost]
     public IActionResult CompletarLogin(string DNI, string contraseña)
     {
-        ViewBag.Exito = BD.VerificarIniciarSesion(DNI, contraseña);
+        bool loginCorrecto = BD.VerificarIniciarSesion(DNI, contraseña);
+        if (!loginCorrecto)
+        {
+            ViewBag.Error = "Usuario o contraseña incorrectos.";
+            return View("Login");
+        }
         return RedirectToAction("Index");
     }
+    
     public IActionResult Register()
     {
         return View();

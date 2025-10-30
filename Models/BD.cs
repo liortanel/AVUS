@@ -34,9 +34,9 @@ public static class BD
     {
         using (SqlConnection connection = ObtenerConexion())
         {
-            var query = @"SELECT dni FROM Avu WHERE dni = @DNI";
+            var query = @"SELECT dni, password_hash FROM Avu WHERE dni = @DNI";
             var usuario = connection.QuerySingleOrDefault<dynamic>(query, new { DNI = DNI });
-            if (usuario = null)
+            if (usuario == null)
             {
                 return false;
             }
