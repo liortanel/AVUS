@@ -1231,3 +1231,47 @@ body:has([data-hide-navbar="true"]) {
     grid-template-columns: 1fr;
   }
 }
+
+/* --- MENSAJE DE ERROR DE LOGIN DISEÑADO --- */
+.login-form #login-error, .login-error-anim {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(90deg, #ffe2df 0%, #f8d2cb 100%);
+  color: #dc3545;
+  border: 1.5px solid #dc3545;
+  border-radius: 8px;
+  font-size: 1em;
+  font-weight: 500;
+  max-width: 350px;
+  min-height: 35px;
+  margin: 0.7em auto 1.2em auto;
+  padding: 0.55em 0.9em 0.55em 0.8em;
+  box-shadow: 0 5px 20px 0px #dc354552;
+  animation: slideDownFade 0.65s cubic-bezier(.55,1.5,.43,1) both;
+}
+.login-form #login-error i, .login-error-anim i{
+  color: #dc3545;
+  font-size: 1.1em;
+  margin-right: 7px;
+}
+@keyframes slideDownFade {
+  from {
+    opacity: 0;
+    transform: translateY(-46px) scale(0.93);
+    filter: blur(2px);
+  }
+  50% {
+    opacity: .8;
+    transform: translateY(6px) scale(1.035);
+    filter: blur(0.2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* --- FIN --- */
