@@ -3,22 +3,7 @@
 }
 
 <div class="welcome-banner">
-    @{
-        string nombre = ViewBag.NombreUsuario as string;
-        string genero = ViewBag.GeneroUsuario as string;
-        string saludo = "Bienvenido";
-        if (!string.IsNullOrWhiteSpace(genero))
-        {
-            var g = genero.Trim().ToLower();
-            if (g.StartsWith("f") || g == "femenino" || g == "fem" || g == "female")
-                saludo = "Bienvenida";
-            else if (g.StartsWith("m") || g.StartsWith("h") || g == "masculino" || g == "m" || g == "male" || g == "hombre")
-                saludo = "Bienvenido";
-            else 
-                saludo = "Bienvenide";
-        }
-    }
-    <h1>¡@saludo@(nombre != null ? $", {nombre}" : "")!</h1>
+    <h1>¡Bienvenido!</h1>
     <p>Estamos aquí para ayudarte a cuidar tu salud y bienestar</p>
 </div>
 

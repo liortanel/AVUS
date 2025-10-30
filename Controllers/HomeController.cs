@@ -17,15 +17,6 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        string dniSesion = HttpContext.Session.GetString("DNI");
-        string nombre = null;
-        string genero = null;
-        if (!string.IsNullOrEmpty(dniSesion))
-        {
-            (nombre, genero) = BD.ObtenerNombreYGeneroPorDNI(dniSesion);
-        }
-        ViewBag.NombreUsuario = nombre;
-        ViewBag.GeneroUsuario = genero;
         return View();
     }
 
