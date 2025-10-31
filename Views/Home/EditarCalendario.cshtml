@@ -1,0 +1,71 @@
+@using AVUS.Models
+@{
+    ViewData["Title"] = "Editar calendario";
+    DateTime fecha = ViewBag.Fecha;
+    var eventos = ViewBag.Eventos as List<Evento> ?? new List<Evento>();
+}
+
+<div class="welcome-banner">
+    <h2>
+        <i class="fas fa-calendar"></i>
+        @fecha.ToString("dddd dd 'de' MMMM 'de' yyyy")
+    </h2>
+</div>
+
+<div class="cards-grid">
+    <section class="event-card">
+        <div class="card-header">
+            <i class="fas fa-plus card-header-icon"></i>
+            <span>Agregar evento</span>
+        </div>
+        <div class="card-content">
+            <form method="post" action="/Home/CrearEvento" style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+                <input type="hidden" name="fecha" value="@fecha.ToString("yyyy-MM-dd")" />
+                <input type="text" name="nombre" placeholder="Nombre del evento" style="flex:1; padding:0.5rem; border:1px solid #ddd; border-radius:8px;" />
+                <input type="time" name="hora" style="padding:0.5rem; border:1px solid #ddd; border-radius:8px;" />
+                <button type="submit" class="btn-login" style="width:auto; padding:0.5rem 0.75rem;">Guardar</button>
+            </form>
+        </div>
+    </section>
+
+    <section class="event-card">
+        <div class="card-header">
+            <i class="fas fa-list card-header-icon"></i>
+            <span>Eventos del día</span>
+        </div>
+        <div class="card-content">
+            @if (eventos.Count == 0)
+            {
+                <p>No hay eventos para este día.</p>
+            }
+            else
+            {
+                foreach (var ev in eventos)
+                {
+                    <div style="border:1px solid #eee; border-radius:8px; padding:0.5rem; margin-bottom:0.5rem;">
+                        <form method="post" action="/Home/ActualizarEvento" style="display:flex; gap:0.5rem; align-items:center; flex-wrap:wrap;">
+                            <input type="hidden" name="evento_id" value="@ev.evento_id" />
+                            <input type="hidden" name="fecha" value="@fecha.ToString("yyyy-MM-dd")" />
+                            <input type="text" name="nombre" value="@ev.nombre" style="flex:1; padding:0.5rem; border:1px solid #ddd; border-radius:8px;" />
+                            <input type="time" name="hora" value="@((ev.hora.HasValue) ? ev.hora.Value.ToString("hh\\:mm") : "")" style="padding:0.5rem; border:1px solid #ddd; border-radius:8px;" />
+                            <button type="submit" class="btn-login" style="width:auto; padding:0.5rem 0.75rem;">Actualizar</button>
+                        </form>
+                        <form method="post" action="/Home/EliminarEvento" style="margin-top:0.25rem;">
+                            <input type="hidden" name="evento_id" value="@ev.evento_id" />
+                            <input type="hidden" name="fecha" value="@fecha.ToString("yyyy-MM-dd")" />
+                            <button type="submit" class="btn-login" style="background:#d9534f; width:auto; padding:0.35rem 0.6rem;">Eliminar</button>
+                        </form>
+                    </div>
+                }
+            }
+        </div>
+    </section>
+</div>
+
+<div class="action-buttons">
+    <a href="/Home/Calendario?year=@fecha.Year&month=@fecha.Month" class="action-btn">
+        <i class="fas fa-arrow-left action-btn-icon"></i>
+        <span class="action-btn-label">Volver al calendario</span>
+    </a>
+</div>
+

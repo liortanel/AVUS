@@ -97,6 +97,96 @@ public class HomeController : Controller
         return RedirectToAction("Login");
     }
 
+    public IActionResult Calendario(int? year, int? month)
+    {
+        if (!EstaLogueado())
+        {
+            return RedirectToAction("Login");
+        }
+        var dni = HttpContext.Session.GetString("UserDNI");
+        var avuId = BD.ObtenerAvuIdPorDni(dni!);
+        if (avuId == null)
+        {
+            return RedirectToAction("Login");
+        }
+        var now = DateTime.Now;
+        int y = year ?? now.Year;
+        int m = month ?? now.Month;
+        if (m < 1) { m = 12; y--; }
+        if (m > 12) { m = 1; y++; }
+        var eventos = BD.ObtenerEventosDelMes(avuId.Value, y, m);
+        ViewBag.Year = y;
+        ViewBag.Month = m;
+        ViewBag.Eventos = eventos;
+        return View("Calendario");
+    }
+
+    public IActionResult EditarCalendario(DateTime fecha)
+    {
+        if (!EstaLogueado())
+        {
+            return RedirectToAction("Login");
+        }
+        var dni = HttpContext.Session.GetString("UserDNI");
+        var avuId = BD.ObtenerAvuIdPorDni(dni!);
+        if (avuId == null)
+        {
+            return RedirectToAction("Login");
+        }
+        var eventos = BD.ObtenerEventosDelDia(avuId.Value, fecha.Date);
+        ViewBag.Fecha = fecha.Date;
+        ViewBag.Eventos = eventos;
+        return View("EditarCalendario");
+    }
+
+    [HttpPost]
+    public IActionResult CrearEvento(string nombre, DateTime fecha, string? hora)
+    {
+        if (!EstaLogueado())
+        {
+            return RedirectToAction("Login");
+        }
+        var dni = HttpContext.Session.GetString("UserDNI");
+        var avuId = BD.ObtenerAvuIdPorDni(dni!);
+        if (avuId == null)
+        {
+            return RedirectToAction("Login");
+        }
+        TimeSpan? horaTs = null;
+        if (!string.IsNullOrWhiteSpace(hora) && TimeSpan.TryParse(hora, out var parsed))
+        {
+            horaTs = parsed;
+        }
+        BD.CrearEvento(avuId.Value, nombre?.Trim() ?? "Evento", fecha.Date, horaTs);
+        return RedirectToAction("EditarCalendario", new { fecha = fecha.ToString("yyyy-MM-dd") });
+    }
+
+    [HttpPost]
+    public IActionResult ActualizarEvento(int evento_id, string nombre, string? hora, DateTime fecha)
+    {
+        if (!EstaLogueado())
+        {
+            return RedirectToAction("Login");
+        }
+        TimeSpan? horaTs = null;
+        if (!string.IsNullOrWhiteSpace(hora) && TimeSpan.TryParse(hora, out var parsed))
+        {
+            horaTs = parsed;
+        }
+        BD.ActualizarEvento(evento_id, nombre?.Trim() ?? "Evento", horaTs);
+        return RedirectToAction("EditarCalendario", new { fecha = fecha.ToString("yyyy-MM-dd") });
+    }
+
+    [HttpPost]
+    public IActionResult EliminarEvento(int evento_id, DateTime fecha)
+    {
+        if (!EstaLogueado())
+        {
+            return RedirectToAction("Login");
+        }
+        BD.EliminarEvento(evento_id);
+        return RedirectToAction("EditarCalendario", new { fecha = fecha.ToString("yyyy-MM-dd") });
+    }
     private bool EstaLogueado()
     {
         string? dni = HttpContext.Session.GetString("UserDNI");

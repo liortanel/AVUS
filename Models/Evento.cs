@@ -4,5 +4,5 @@ public class Evento
     public int avu_id { get; set; }
     public string nombre { get; set; }
     public DateTime fecha { get; set; }
-    public DateTime hora { get; set; }
+    public TimeSpan? hora { get; set; }
 }

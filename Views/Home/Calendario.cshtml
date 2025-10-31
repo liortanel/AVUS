@@ -1,0 +1,83 @@
+@{
+    ViewData["Title"] = "Calendario";
+    int year = ViewBag.Year ?? DateTime.Now.Year;
+    int month = ViewBag.Month ?? DateTime.Now.Month;
+    var eventos = ViewBag.Eventos as List<Evento> ?? new List<Evento>();
+    var eventosPorDia = eventos
+        .GroupBy(e => e.fecha.Date)
+        .ToDictionary(g => g.Key, g => g.ToList());
+
+    var primerDiaMes = new DateTime(year, month, 1);
+    int diaSemanaPrimer = (int)primerDiaMes.DayOfWeek; // 0=Sunday
+    int offset = (diaSemanaPrimer + 6) % 7; // Convertir a 0=Lunes
+    int diasMes = DateTime.DaysInMonth(year, month);
+    var prev = primerDiaMes.AddMonths(-1);
+    var next = primerDiaMes.AddMonths(1);
+    var es = System.Globalization.CultureInfo.GetCultureInfo("es-ES");
+    var tituloMes = es.TextInfo.ToTitleCase(primerDiaMes.ToString("MMMM yyyy", es));
+}
+
+<div class="calendar-container">
+    <div class="calendar-header" style="display:flex; align-items:center; justify-content:center; gap:1rem;">
+        <a class="btn-login" style="width:3rem; height:3rem; display:flex; align-items:center; justify-content:center; padding:0;" href="/Home/Calendario?year=@prev.Year&month=@prev.Month">«</a>
+        <h2 style="margin:0; text-align:center; white-space:nowrap;">@tituloMes</h2>
+        <a class="btn-login" style="width:3rem; height:3rem; display:flex; align-items:center; justify-content:center; padding:0;" href="/Home/Calendario?year=@next.Year&month=@next.Month">»</a>
+    </div>
+
+    <table class="calendar-table" style="width:100%; border-collapse:collapse; table-layout:fixed;">
+        <thead>
+            <tr>
+                <th>Lun</th>
+                <th>Mar</th>
+                <th>Mié</th>
+                <th>Jue</th>
+                <th>Vie</th>
+                <th>Sáb</th>
+                <th>Dom</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int dia = 1;
+                for (int fila = 0; fila < 6; fila++)
+                {
+                    <tr>
+                        @for (int col = 0; col < 7; col++)
+                        {
+                            if (fila == 0 && col < offset || dia > diasMes)
+                            {
+                                <td style="padding:0.5rem; border:1px solid #eee; background:#fafafa; height:110px; overflow:hidden;"></td>
+                            }
+                            else
+                            {
+                                var fechaActual = new DateTime(year, month, dia);
+                                bool tieneEventos = eventosPorDia.ContainsKey(fechaActual.Date);
+                                <td style="padding:0.5rem; border:1px solid #eee; vertical-align:top; height:110px; overflow:hidden;">
+                                    <a href="/Home/EditarCalendario?fecha=@fechaActual.ToString("yyyy-MM-dd")" class="action-btn" style="display:block; text-align:left;">
+                                        <div style="font-weight:bold;">@dia</div>
+                                        @{ var lista = tieneEventos ? eventosPorDia[fechaActual.Date] : new List<Evento>(); var primero = lista.FirstOrDefault(); }
+                                        <div style="margin-top:0.25rem; font-size:0.85rem; color:#0760BF; height:36px; display:flex; flex-direction:column; gap:2px; overflow:hidden;">
+                                            <div style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; @((primero == null) ? "visibility:hidden;" : "")">
+                                                <i class="fas fa-circle" style="font-size:0.5rem; margin-right:0.25rem;"></i>@(primero?.nombre)
+                                            </div>
+                                            <div style="@((lista.Count > 1) ? "" : "visibility:hidden;")">+@((lista.Count > 1) ? (lista.Count - 1) : 0) más</div>
+                                        </div>
+                                    </a>
+                                </td>
+                                dia++;
+                            }
+                        }
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    <div class="action-buttons" style="margin-top:1rem;">
+        <a href="/" class="action-btn">
+            <i class="fas fa-home action-btn-icon"></i>
+            <span class="action-btn-label">Volver al inicio</span>
+        </a>
+    </div>
+</div>
+

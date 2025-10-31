@@ -94,4 +94,64 @@ public static class BD
             connection.Execute(query, new { DNI = DNI });
         }
     }
+
+    public static int? ObtenerAvuIdPorDni(string dni)
+    {
+        using (SqlConnection connection = ObtenerConexion())
+        {
+            var query = @"SELECT avu_id FROM Avu WHERE dni = @dni";
+            return connection.QuerySingleOrDefault<int?>(query, new { dni });
+        }
+    }
+
+    public static List<Evento> ObtenerEventosDelMes(int avuId, int year, int month)
+    {
+        using (SqlConnection connection = ObtenerConexion())
+        {
+            var query = @"SELECT evento_id, avu_id, nombre, fecha, hora
+                           FROM Evento
+                           WHERE avu_id = @avuId AND YEAR(fecha) = @year AND MONTH(fecha) = @month";
+            return connection.Query<Evento>(query, new { avuId, year, month }).ToList();
+        }
+    }
+
+    public static List<Evento> ObtenerEventosDelDia(int avuId, DateTime fecha)
+    {
+        using (SqlConnection connection = ObtenerConexion())
+        {
+            var query = @"SELECT evento_id, avu_id, nombre, fecha, hora
+                           FROM Evento
+                           WHERE avu_id = @avuId AND fecha = @fecha";
+            return connection.Query<Evento>(query, new { avuId, fecha = fecha.Date }).ToList();
+        }
+    }
+
+    public static int CrearEvento(int avuId, string nombre, DateTime fecha, TimeSpan? hora)
+    {
+        using (SqlConnection connection = ObtenerConexion())
+        {
+            var query = @"INSERT INTO Evento (avu_id, nombre, fecha, hora)
+                          VALUES (@avuId, @nombre, @fecha, @hora);
+                          SELECT CAST(SCOPE_IDENTITY() as int);";
+            return connection.QuerySingle<int>(query, new { avuId, nombre, fecha = fecha.Date, hora });
+        }
+    }
+
+    public static void ActualizarEvento(int eventoId, string nombre, TimeSpan? hora)
+    {
+        using (SqlConnection connection = ObtenerConexion())
+        {
+            var query = @"UPDATE Evento SET nombre = @nombre, hora = @hora WHERE evento_id = @eventoId";
+            connection.Execute(query, new { eventoId, nombre, hora });
+        }
+    }
+
+    public static void EliminarEvento(int eventoId)
+    {
+        using (SqlConnection connection = ObtenerConexion())
+        {
+            var query = @"DELETE FROM Evento WHERE evento_id = @eventoId";
+            connection.Execute(query, new { eventoId });
+        }
+    }
 }
