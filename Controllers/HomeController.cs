@@ -199,6 +199,124 @@ public class HomeController : Controller
         return View("Perfil", perfil);
     }
 
+    public IActionResult Salud()
+    {
+        if (!EstaLogueado())
+        {
+            return RedirectToAction("Login");
+        }
+        return View("Salud");
+    }
+
+    public IActionResult Pastillero()
+    {
+        if (!EstaLogueado())
+        {
+            return RedirectToAction("Login");
+        }
+        var dni = HttpContext.Session.GetString("UserDNI");
+        var avuId = BD.ObtenerAvuIdPorDni(dni!);
+        if (avuId == null)
+        {
+            return RedirectToAction("Login");
+        }
+        var pastillas = BD.ObtenerPastillas(avuId.Value);
+        var ahora = DateTime.Now.TimeOfDay;
+        var ordenadas = pastillas
+            .OrderBy(p => p.hora.HasValue ? ((p.hora.Value >= ahora) ? 0 : 1) : 2)
+            .ThenBy(p => p.hora ?? TimeSpan.MaxValue)
+            .ToList();
+        ViewBag.Pastillas = ordenadas;
+        ViewBag.HoraActual = ahora;
+        return View("Pastillero");
+    }
+
+    public IActionResult TurnosMedicos()
+    {
+        if (!EstaLogueado())
+        {
+            return RedirectToAction("Login");
+        }
+        var dni = HttpContext.Session.GetString("UserDNI");
+        var avuId = BD.ObtenerAvuIdPorDni(dni!);
+        if (avuId == null)
+        {
+            return RedirectToAction("Login");
+        }
+        var turnos = BD.ObtenerTurnosProximos(avuId.Value);
+        var ahora = DateTime.Now;
+        // Construir DateTime completo para ordenar
+        var ordenados = turnos
+            .Select(t => new {
+                Turno = t,
+                FechaHora = (t.dia.HasValue ? t.dia.Value.Date : DateTime.MaxValue.Date)
+                            + (t.hora ?? TimeSpan.Zero)
+            })
+            .OrderBy(x => x.FechaHora < ahora ? 1 : 0)
+            .ThenBy(x => x.FechaHora)
+            .Select(x => x.Turno)
+            .ToList();
+        ViewBag.Turnos = ordenados;
+        ViewBag.Ahora = ahora;
+        return View("TurnosMedicos");
+    }
+
+    [HttpPost]
+    public IActionResult CrearPastilla(string nombre, string? dosis, string? hora)
+    {
+        if (!EstaLogueado())
+        {
+            return RedirectToAction("Login");
+        }
+        var dni = HttpContext.Session.GetString("UserDNI");
+        var avuId = BD.ObtenerAvuIdPorDni(dni!);
+        if (avuId == null)
+        {
+            return RedirectToAction("Login");
+        }
+        if (string.IsNullOrWhiteSpace(nombre))
+        {
+            TempData["PastilleroError"] = "El nombre es obligatorio.";
+            return RedirectToAction("Pastillero");
+        }
+        TimeSpan? horaTs = null;
+        if (!string.IsNullOrWhiteSpace(hora) && TimeSpan.TryParse(hora, out var parsed))
+        {
+            horaTs = parsed;
+        }
+        BD.CrearPastilla(avuId.Value, nombre.Trim(), string.IsNullOrWhiteSpace(dosis) ? null : dosis.Trim(), horaTs);
+        TempData["PastilleroOk"] = "Medicamento agregado.";
+        return RedirectToAction("Pastillero");
+    }
+
+    [HttpPost]
+    public IActionResult CrearTurno(string? especialidad, string? medico, string? dia, string? hora)
+    {
+        if (!EstaLogueado())
+        {
+            return RedirectToAction("Login");
+        }
+        var dni = HttpContext.Session.GetString("UserDNI");
+        var avuId = BD.ObtenerAvuIdPorDni(dni!);
+        if (avuId == null)
+        {
+            return RedirectToAction("Login");
+        }
+        DateTime? diaDt = null;
+        if (!string.IsNullOrWhiteSpace(dia) && DateTime.TryParse(dia, out var parsedDia))
+        {
+            diaDt = parsedDia.Date;
+        }
+        TimeSpan? horaTs = null;
+        if (!string.IsNullOrWhiteSpace(hora) && TimeSpan.TryParse(hora, out var parsedHora))
+        {
+            horaTs = parsedHora;
+        }
+        BD.CrearTurno(avuId.Value, string.IsNullOrWhiteSpace(especialidad) ? null : especialidad.Trim(), string.IsNullOrWhiteSpace(medico) ? null : medico.Trim(), diaDt, horaTs);
+        TempData["TurnoOk"] = "Turno agregado.";
+        return RedirectToAction("TurnosMedicos");
+    }
+
     [HttpPost]
     public IActionResult ActualizarEmail(string email)
     {

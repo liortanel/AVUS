@@ -3,6 +3,7 @@ using Dapper;
 using System.Collections.Generic;
 using System.Linq;
 using BCrypt.Net;
+using AVUS.Models;
 
 public static class BD
 {
@@ -152,6 +153,51 @@ public static class BD
         {
             var query = @"DELETE FROM Evento WHERE evento_id = @eventoId";
             connection.Execute(query, new { eventoId });
+        }
+    }
+
+    public static List<Pastilla> ObtenerPastillas(int avuId)
+    {
+        using (SqlConnection connection = ObtenerConexion())
+        {
+            var query = @"SELECT pastilla_id, avu_id, nombre, dosis, hora
+                           FROM Pastilla
+                           WHERE avu_id = @avuId";
+            return connection.Query<Pastilla>(query, new { avuId }).ToList();
+        }
+    }
+
+    public static List<Turno> ObtenerTurnosProximos(int avuId)
+    {
+        using (SqlConnection connection = ObtenerConexion())
+        {
+            var query = @"SELECT turno_id, avu_id, especialidad, medico, dia, hora
+                           FROM Turno
+                           WHERE avu_id = @avuId";
+            // Se devolverán todos y se ordenarán en la capa de aplicación por fecha y hora
+            return connection.Query<Turno>(query, new { avuId }).ToList();
+        }
+    }
+
+    public static int CrearPastilla(int avuId, string nombre, string? dosis, TimeSpan? hora)
+    {
+        using (SqlConnection connection = ObtenerConexion())
+        {
+            var query = @"INSERT INTO Pastilla (avu_id, nombre, dosis, hora)
+                          VALUES (@avuId, @nombre, @dosis, @hora);
+                          SELECT CAST(SCOPE_IDENTITY() as int);";
+            return connection.QuerySingle<int>(query, new { avuId, nombre, dosis, hora });
+        }
+    }
+
+    public static int CrearTurno(int avuId, string? especialidad, string? medico, DateTime? dia, TimeSpan? hora)
+    {
+        using (SqlConnection connection = ObtenerConexion())
+        {
+            var query = @"INSERT INTO Turno (avu_id, especialidad, medico, dia, hora)
+                          VALUES (@avuId, @especialidad, @medico, @dia, @hora);
+                          SELECT CAST(SCOPE_IDENTITY() as int);";
+            return connection.QuerySingle<int>(query, new { avuId, especialidad, medico, dia, hora });
         }
     }
 }

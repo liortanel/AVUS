@@ -1,0 +1,73 @@
+@{
+    ViewData["Title"] = "Pastillero";
+    var pastillas = ViewBag.Pastillas as IEnumerable<AVUS.Models.Pastilla>;
+    var ahora = (TimeSpan)ViewBag.HoraActual;
+}
+
+<div class="tutoriales-header">
+    <h1><i class="fas fa-pills"></i> Pastillero</h1>
+    <p>Agregá y consultá tus próximos medicamentos</p>
+    <div style="margin-top:1rem;">
+        <a class="btn-back" href="@Url.Action("Salud", "Home")" style="max-width: 200px; margin: 0 auto; display:block;">Volver a Salud</a>
+    </div>
+</div>
+
+<div class="tutoriales-grid" style="margin-top: 2rem;">
+    <div class="tutorial-card">
+        <h3>Agregar medicamento</h3>
+        @if (TempData["PastilleroError"] != null)
+        {
+            <div class="card-footer" style="color:#c0392b">@TempData["PastilleroError"]</div>
+        }
+        @if (TempData["PastilleroOk"] != null)
+        {
+            <div class="card-footer" style="color:#27ae60">@TempData["PastilleroOk"]</div>
+        }
+        <form method="post" action="@Url.Action("CrearPastilla", "Home")" class="row g-3">
+            <div class="col-12 col-md-4">
+                <label class="form-label">Nombre</label>
+                <input name="nombre" class="form-control" required />
+            </div>
+            <div class="col-12 col-md-4">
+                <label class="form-label">Dosis</label>
+                <input name="dosis" class="form-control" />
+            </div>
+            <div class="col-12 col-md-3">
+                <label class="form-label">Hora</label>
+                <input name="hora" type="time" class="form-control" />
+            </div>
+            <div class="col-12 col-md-1 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">Agregar</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="tutorial-card">
+        <h3>Próximos medicamentos</h3>
+        @if (pastillas == null || !pastillas.Any())
+        {
+            <div class="card-footer">No hay medicamentos cargados.</div>
+        }
+        else
+        {
+            <div class="list-group">
+                @foreach (var p in pastillas)
+                {
+                    var hora = p.hora;
+                    var esProxima = hora.HasValue && hora.Value >= ahora;
+                    <div class="list-group-item d-flex justify-content-between align-items-center @(esProxima ? "list-group-item-primary" : "")">
+                        <div>
+                            <div class="fw-bold">@p.nombre</div>
+                            <div class="text-muted">@p.dosis</div>
+                        </div>
+                        <div class="text-nowrap">
+                            @(hora.HasValue ? DateTime.Today.Add(hora.Value).ToString("HH:mm") : "--:--")
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+

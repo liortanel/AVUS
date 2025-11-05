@@ -1,8 +1,11 @@
-public class Pastilla
+namespace AVUS.Models
 {
-    public int pastillero_id { get; set; }
-    public int avu_id { get; set; }
-    public string nombre { get; set; }
-    public string dosis { get; set; }
-    public string hora { get; set; }
+    public class Pastilla
+    {
+        public int pastilla_id { get; set; }
+        public int avu_id { get; set; }
+        public string nombre { get; set; }
+        public string? dosis { get; set; }
+        public TimeSpan? hora { get; set; }
+    }
 }

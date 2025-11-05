@@ -1,0 +1,25 @@
+@{
+    ViewData["Title"] = "Salud";
+}
+
+<div class="tutoriales-header">
+    <h1><i class="fas fa-heartbeat"></i> Salud</h1>
+    <p>Gestioná tus medicamentos y turnos médicos</p>
+    </div>
+
+<div class="tutoriales-grid" style="margin-top: 2rem;">
+    <a href="@Url.Action("Pastillero", "Home")" class="tutorial-card">
+        <div class="tutorial-icon"><i class="fas fa-pills"></i></div>
+        <h3>Pastillero</h3>
+        <p>Revisá y cargá los próximos medicamentos a tomar</p>
+        <i class="fas fa-arrow-right tutorial-arrow"></i>
+    </a>
+    <a href="@Url.Action("TurnosMedicos", "Home")" class="tutorial-card">
+        <div class="tutorial-icon"><i class="fas fa-user-md"></i></div>
+        <h3>Turnos Médicos</h3>
+        <p>Consultá y agregá turnos con médicos y especialidades</p>
+        <i class="fas fa-arrow-right tutorial-arrow"></i>
+    </a>
+</div>
+
+
