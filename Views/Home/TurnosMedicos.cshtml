@@ -29,7 +29,7 @@
                 <input name="especialidad" class="form-control" />
             </div>
             <div class="form-field">
-                <label class="form-label">Dr/ Dra</label>
+                <label class="form-label">Dr / Dra</label>
                 <input name="medico" class="form-control" />
             </div>
             <div class="form-field">
@@ -59,13 +59,13 @@
                 {
                     var fecha = (t.dia.HasValue ? t.dia.Value.Date : DateTime.MaxValue.Date) + (t.hora ?? TimeSpan.Zero);
                     var esProximo = fecha >= ahora;
-                    <div class="list-group-item d-flex justify-content-between align-items-center @(esProximo ? "list-group-item-primary" : "")">
-                        <div>
-                            <div class="fw-bold">@t.especialidad</div>
-                            <div class="text-muted">Dr/a. @t.medico</div>
+                    <div class="list-group-item @(esProximo ? "list-group-item-primary" : "")">
+                        <div style="margin-bottom: 0.5rem;">
+                            <div class="fw-bold" style="word-break: break-word;">@t.especialidad</div>
+                            <div class="text-muted" style="word-break: break-word;">Dr/a. @t.medico</div>
                         </div>
-                        <div class="text-nowrap text-end">
-                            @fecha.ToString("dd/MM/yyyy HH:mm")
+                        <div class="text-muted" style="font-size: 0.9rem; border-top: 1px solid rgba(0,0,0,0.1); padding-top: 0.5rem; margin-top: 0.5rem;">
+                            <i class="fas fa-calendar-alt"></i> @fecha.ToString("dd/MM/yyyy HH:mm")
                         </div>
                     </div>
                 }

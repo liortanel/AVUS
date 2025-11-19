@@ -697,11 +697,20 @@ footer {
   border-radius: 12px;
   padding: 0.85rem 1rem;
   box-shadow: 0 1px 6px rgba(0,0,0,0.06);
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  min-width: 0;
 }
 
 .list-group-item-primary {
   outline: 2px solid rgba(52, 206, 193, 0.6);
   background: linear-gradient(0deg, rgba(52,206,193,0.08), rgba(52,206,193,0.08)), white;
+}
+
+.list-group-item > div {
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 /* Text helpers */

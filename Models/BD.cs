@@ -174,7 +174,6 @@ public static class BD
             var query = @"SELECT turno_id, avu_id, especialidad, medico, dia, hora
                            FROM Turno
                            WHERE avu_id = @avuId";
-            // Se devolverán todos y se ordenarán en la capa de aplicación por fecha y hora
             return connection.Query<Turno>(query, new { avuId }).ToList();
         }
     }
@@ -207,6 +206,17 @@ public static class BD
         {
             var query = @"SELECT contacto_principal FROM Emergencia WHERE avu_id = @avuId";
             return connection.QuerySingleOrDefault<string?>(query, new { avuId });
+        }
+    }
+
+    public static Familiar? ObtenerContactoPrincipal(int avuId)
+    {
+        using (SqlConnection connection = ObtenerConexion())
+        {
+            var query = @"SELECT familiar_id, avu_id, nombre, apellido, numero, principal
+                          FROM Familiar
+                          WHERE avu_id = @avuId AND principal = 1";
+            return connection.QuerySingleOrDefault<Familiar>(query, new { avuId });
         }
     }
 

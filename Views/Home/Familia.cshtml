@@ -81,7 +81,6 @@
     </div>
 </div>
 
-<!-- Modal para agregar contacto -->
 <div class="modal-overlay" id="modalAgregar" style="display: none;">
     <div class="modal-content">
         <div class="modal-header">
@@ -134,12 +133,10 @@
             const btnCancelar = document.getElementById('btnCancelar');
             const contactoCards = document.querySelectorAll('.contacto-card');
 
-            // Abrir modal
             btnAgregar.addEventListener('click', function() {
                 modal.style.display = 'flex';
             });
 
-            // Cerrar modal
             function cerrarModal() {
                 modal.style.display = 'none';
                 document.getElementById('nombre').value = '';
@@ -151,17 +148,14 @@
             btnCerrar.addEventListener('click', cerrarModal);
             btnCancelar.addEventListener('click', cerrarModal);
 
-            // Cerrar al hacer click fuera del modal
             modal.addEventListener('click', function(e) {
                 if (e.target === modal) {
                     cerrarModal();
                 }
             });
 
-            // Mostrar/ocultar acciones al hacer click en un contacto
             contactoCards.forEach(card => {
                 card.addEventListener('click', function(e) {
-                    // No hacer nada si se clickeó en los botones de acción
                     if (e.target.closest('.contacto-actions')) {
                         return;
                     }
@@ -170,14 +164,12 @@
                     const actions = document.getElementById('actions-' + familiarId);
                     const allActions = document.querySelectorAll('.contacto-actions');
                     
-                    // Ocultar todas las acciones
                     allActions.forEach(action => {
                         if (action !== actions) {
                             action.style.display = 'none';
                         }
                     });
 
-                    // Mostrar/ocultar las acciones del contacto clickeado
                     if (actions.style.display === 'none' || actions.style.display === '') {
                         actions.style.display = 'flex';
                     } else {
@@ -186,7 +178,6 @@
                 });
             });
 
-            // Ocultar acciones al hacer click fuera
             document.addEventListener('click', function(e) {
                 if (!e.target.closest('.contacto-card')) {
                     document.querySelectorAll('.contacto-actions').forEach(action => {
@@ -195,7 +186,6 @@
                 }
             });
 
-            // Manejar confirmación de eliminación
             const formsEliminar = document.querySelectorAll('.form-eliminar');
             formsEliminar.forEach(form => {
                 form.addEventListener('submit', function(e) {
@@ -359,12 +349,17 @@
         text-decoration: none;
         text-align: center;
         font-weight: 600;
+        font-size: 1rem;
         transition: all 0.3s ease;
         display: flex;
         align-items: center;
         justify-content: center;
         gap: 0.5rem;
         cursor: pointer;
+    }
+
+    .btn-action i {
+        font-size: 1rem;
     }
 
     .btn-chat {
@@ -394,12 +389,35 @@
         margin: 0;
         padding: 0;
         box-sizing: border-box;
+        display: flex;
+        font-size: inherit;
+    }
+
+    .btn-action-form button {
+        font-size: inherit;
     }
 
     .btn-delete {
         background: #dc3545;
-        color: white;
-        width: 100%;
+        flex: 1;
+        color:white;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        border: none;
+        text-decoration: none;
+        text-align: center;
+        font-weight: 550;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        cursor: pointer;
+    }
+
+    .btn-delete i {
+        font-size: 1rem;
     }
 
     .btn-delete:hover {
@@ -456,7 +474,6 @@
         box-shadow: 0 6px 16px rgba(7, 96, 191, 0.4);
     }
 
-    /* Modal */
     .modal-overlay {
         position: fixed;
         top: 0;

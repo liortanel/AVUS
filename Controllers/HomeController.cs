@@ -423,8 +423,18 @@ public class HomeController : Controller
         {
             return RedirectToAction("Login");
         }
-        var contactoEmergencia = BD.ObtenerContactoEmergencia(avuId.Value);
-        ViewBag.ContactoEmergencia = contactoEmergencia;
+        var contactoPrincipal = BD.ObtenerContactoPrincipal(avuId.Value);
+        if (contactoPrincipal != null)
+        {
+            var nombreCompleto = $"{contactoPrincipal.nombre}{(string.IsNullOrWhiteSpace(contactoPrincipal.apellido) ? "" : " " + contactoPrincipal.apellido)}".Trim();
+            ViewBag.ContactoPrincipal = $"{nombreCompleto} - {contactoPrincipal.numero}";
+            ViewBag.ContactoPrincipalNumero = contactoPrincipal.numero;
+        }
+        else
+        {
+            ViewBag.ContactoPrincipal = null;
+            ViewBag.ContactoPrincipalNumero = null;
+        }
         return View("Emergencia");
     }
 
@@ -441,20 +451,20 @@ public class HomeController : Controller
         {
             return Json(new { success = false, message = "Usuario no encontrado" });
         }
-        var contactoEmergencia = BD.ObtenerContactoEmergencia(avuId.Value);
+        var contactoPrincipal = BD.ObtenerContactoPrincipal(avuId.Value);
         var datosPerfil = BD.DatosPerfil(dni!);
         var nombreUsuario = $"{datosPerfil.GetValueOrDefault("nombre", "")} {datosPerfil.GetValueOrDefault("apellido", "")}".Trim();
         
         // Aquí se podría implementar la lógica para:
         // 1. Llamar al SAMU (107 en Argentina)
-        // 2. Enviar mensaje al contacto de emergencia
+        // 2. Enviar mensaje al contacto principal
         
         // Por ahora retornamos éxito con la información
         return Json(new 
         { 
             success = true, 
             message = "Emergencia activada",
-            contacto = contactoEmergencia,
+            contacto = contactoPrincipal?.numero,
             nombreUsuario = nombreUsuario
         });
     }

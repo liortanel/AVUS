@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AVUS")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ebecab757894eecb42acd03d0c00a2cbc79c06df")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6fa6e3a60bb1d94f2068d903065734004f177006")]
 [assembly: System.Reflection.AssemblyProductAttribute("AVUS")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AVUS")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

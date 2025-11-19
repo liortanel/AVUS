@@ -11,19 +11,19 @@
     <div class="emergencia-content">
         <div class="emergencia-info">
             <div class="info-card">
-                <i class="fas fa-phone-alt"></i>
+                <i class="fas fa-phone-alt"></i> 
                 <div>
                     <h3>Llamar al SAME</h3>
                     <p>Se llamará automáticamente al 107</p>
                 </div>
             </div>
-            @if (ViewBag.ContactoEmergencia != null)
+            @if (ViewBag.ContactoPrincipal != null)
             {
                 <div class="info-card">
                     <i class="fas fa-user-friends"></i>
                     <div>
-                        <h3>Contacto de Emergencia</h3>
-                        <p>@ViewBag.ContactoEmergencia</p>
+                        <h3>Contacto Principal</h3>
+                        <p>@ViewBag.ContactoPrincipal</p>
                     </div>
                 </div>
             }
@@ -32,8 +32,8 @@
                 <div class="info-card info-card-warning">
                     <i class="fas fa-exclamation-circle"></i>
                     <div>
-                        <h3>Sin Contacto de Emergencia</h3>
-                        <p>Configurá un contacto de emergencia en tu perfil</p>
+                        <h3>Sin Contacto Principal</h3>
+                        <p>Configurá un contacto principal en Familia</p>
                     </div>
                 </div>
             }
@@ -73,36 +73,32 @@
             let isDragging = false;
             let startX = 0;
             let currentX = 0;
-            let sliderLeft = 5; // Posición inicial del CSS (left: 5px)
-            let startSliderLeft = 5; // Posición inicial del slider cuando comienza el arrastre
+            let sliderLeft = 5;
+            let startSliderLeft = 5;
             let holdTimer = null;
             let progressTimer = null;
             let countdownTimer = null;
-            let isActivated = false; // Prevenir múltiples activaciones
-            let isResetting = false; // Prevenir reset durante animación
-            const HOLD_TIME = 3000; // 3 segundos
-            const COUNTDOWN_TIME = 1000; // 1 segundo por número
-            const INITIAL_LEFT = 5; // Posición inicial del slider en CSS
-            const RIGHT_MARGIN = 5; // Margen derecho para que no llegue hasta el borde
+            let isActivated = false;
+            let isResetting = false;
+            const HOLD_TIME = 3000;
+            const COUNTDOWN_TIME = 1000;
+            const INITIAL_LEFT = 5;
+            const RIGHT_MARGIN = 5;
             let MAX_SLIDE = 0;
             
-            // Calcular MAX_SLIDE después de que los elementos estén renderizados
             function calculateMaxSlide() {
                 MAX_SLIDE = swipeButton.offsetWidth - swipeSlider.offsetWidth - INITIAL_LEFT - RIGHT_MARGIN;
             }
             
-            // Calcular al inicio y cuando cambie el tamaño
             calculateMaxSlide();
             window.addEventListener('resize', calculateMaxSlide);
 
             function updateSliderPosition() {
                 if (isResetting || isActivated) return;
                 
-                // Asegurar que sliderLeft esté dentro de los límites
                 sliderLeft = Math.max(INITIAL_LEFT, Math.min(INITIAL_LEFT + MAX_SLIDE, sliderLeft));
                 swipeSlider.style.left = sliderLeft + 'px';
                 
-                // Calcular el porcentaje relativo a la posición inicial
                 const relativePosition = sliderLeft - INITIAL_LEFT;
                 const percentage = (relativePosition / MAX_SLIDE) * 100;
                 
@@ -111,7 +107,6 @@
                     swipeText.textContent = 'Mantené presionado';
                     swipeInstruction.textContent = 'Mantené deslizado durante 3 segundos';
                     
-                    // Solo iniciar el timer si no está corriendo y estamos arrastrando
                     if (!progressTimer && isDragging && !isActivated) {
                         startHoldTimer();
                     }
@@ -125,10 +120,10 @@
             }
 
             function startHoldTimer() {
-                if (isActivated || progressTimer) return; // Evitar múltiples timers
+                if (isActivated || progressTimer) return;
                 
                 let elapsed = 0;
-                const interval = 50; // Actualizar cada 50ms
+                const interval = 50;
                 let lastCountdownNumber = 0;
                 let countdownShown = false;
                 
@@ -137,7 +132,6 @@
                 hideCountdown();
                 
                 progressTimer = setInterval(() => {
-                    // Verificar si el usuario sigue arrastrando y está en la zona activa
                     if (!isDragging || isResetting || isActivated) {
                         clearInterval(progressTimer);
                         progressTimer = null;
@@ -157,13 +151,9 @@
                     const progress = (elapsed / HOLD_TIME) * 100;
                     swipeProgressBar.style.width = progress + '%';
                     
-                    // Mostrar cuenta regresiva en los últimos 3 segundos
                     const remaining = HOLD_TIME - elapsed;
                     if (remaining <= COUNTDOWN_TIME * 3 && remaining > 0) {
-                        // Calcular el número de cuenta regresiva (3, 2, 1)
-                        // remaining: 3000-2001ms = 3, 2000-1001ms = 2, 1000-1ms = 1
                         const countdownNumber = Math.min(3, Math.ceil(remaining / COUNTDOWN_TIME));
-                        // Solo actualizar si cambió el número y es válido
                         if (countdownNumber !== lastCountdownNumber && countdownNumber <= 3 && countdownNumber >= 1) {
                             lastCountdownNumber = countdownNumber;
                             showCountdown(countdownNumber);
@@ -215,7 +205,7 @@
             }
 
             function activateEmergency() {
-                if (isActivated) return; // Prevenir múltiples activaciones
+                if (isActivated) return;
                 
                 isActivated = true;
                 stopHoldTimer();
@@ -225,7 +215,6 @@
                 swipeText.innerHTML = '<i class="fas fa-check"></i> Activando...';
                 swipeInstruction.textContent = 'Emergencia activada';
                 
-                // Enviar alerta al contacto de emergencia primero
                 fetch('/Home/ActivarEmergencia', {
                     method: 'POST',
                     headers: {
@@ -236,21 +225,17 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        // Enviar mensaje al contacto de emergencia si existe
                         if (data.contacto) {
                             const mensaje = encodeURIComponent(`🚨 ALERTA DE EMERGENCIA 🚨\n\n${data.nombreUsuario} ha activado una alerta de emergencia.\n\nPor favor, contactá inmediatamente.\n\nFecha: ${new Date().toLocaleString('es-AR')}`);
-                            // Usar setTimeout para evitar que se abran múltiples ventanas
                             setTimeout(() => {
                                 window.location.href = `sms:${data.contacto}?body=${mensaje}`;
                             }, 100);
                         }
                         
-                        // Llamar al SAME (107) después de un breve delay
                         setTimeout(() => {
                             window.location.href = 'tel:107';
                         }, 200);
                         
-                        // Resetear después de un tiempo
                         setTimeout(() => {
                             resetButton();
                         }, 3000);
@@ -277,7 +262,6 @@
                 stopHoldTimer();
                 hideCountdown();
                 
-                // Animar el reset suavemente a la posición inicial
                 swipeSlider.style.transition = 'left 0.4s ease-out';
                 sliderLeft = INITIAL_LEFT;
                 swipeSlider.style.left = INITIAL_LEFT + 'px';
@@ -286,19 +270,16 @@
                 swipeText.textContent = 'Deslizá para activar';
                 swipeInstruction.textContent = 'Deslizá hasta el final y mantené';
                 
-                // Esperar a que termine la animación antes de permitir otro drag
                 setTimeout(() => {
                     isResetting = false;
                     swipeSlider.style.transition = '';
                 }, 400);
             }
 
-            // Eventos táctiles (móvil)
             swipeButton.addEventListener('touchstart', function(e) {
                 if (isResetting || isActivated) return;
                 isDragging = true;
                 startX = e.touches[0].clientX;
-                // Capturar la posición actual del slider como punto de inicio
                 startSliderLeft = parseInt(swipeSlider.style.left) || INITIAL_LEFT;
                 sliderLeft = startSliderLeft;
                 swipeButton.style.transition = 'none';
@@ -309,7 +290,6 @@
                 e.preventDefault();
                 currentX = e.touches[0].clientX;
                 const diff = currentX - startX;
-                // Calcular la nueva posición basada en la posición inicial del slider cuando comenzó el arrastre
                 const newLeft = startSliderLeft + diff;
                 sliderLeft = Math.max(INITIAL_LEFT, Math.min(INITIAL_LEFT + MAX_SLIDE, newLeft));
                 updateSliderPosition();
@@ -319,14 +299,12 @@
                 if (!isDragging || isActivated) return;
                 isDragging = false;
                 
-                // Siempre resetear cuando se suelta, a menos que ya esté activado
                 isResetting = true;
                 stopHoldTimer();
                 swipeSlider.style.transition = 'left 0.4s ease-out';
                 sliderLeft = INITIAL_LEFT;
                 swipeSlider.style.left = INITIAL_LEFT + 'px';
                 
-                // Actualizar estado visual sin usar updateSliderPosition
                 swipeButton.classList.remove('swipe-active');
                 swipeText.textContent = 'Deslizá para activar';
                 swipeInstruction.textContent = 'Deslizá hasta el final y mantené';
@@ -337,12 +315,10 @@
                 }, 400);
             });
 
-            // Eventos de mouse (escritorio)
             swipeButton.addEventListener('mousedown', function(e) {
                 if (isResetting || isActivated) return;
                 isDragging = true;
                 startX = e.clientX;
-                // Capturar la posición actual del slider como punto de inicio
                 startSliderLeft = parseInt(swipeSlider.style.left) || INITIAL_LEFT;
                 sliderLeft = startSliderLeft;
                 swipeButton.style.transition = 'none';
@@ -353,7 +329,6 @@
                 if (!isDragging || isResetting || isActivated) return;
                 currentX = e.clientX;
                 const diff = currentX - startX;
-                // Calcular la nueva posición basada en la posición inicial del slider cuando comenzó el arrastre
                 const newLeft = startSliderLeft + diff;
                 sliderLeft = Math.max(INITIAL_LEFT, Math.min(INITIAL_LEFT + MAX_SLIDE, newLeft));
                 updateSliderPosition();
@@ -364,14 +339,12 @@
                 isDragging = false;
                 swipeButton.style.cursor = '';
                 
-                // Siempre resetear cuando se suelta, a menos que ya esté activado
                 isResetting = true;
                 stopHoldTimer();
                 swipeSlider.style.transition = 'left 0.4s ease-out';
                 sliderLeft = INITIAL_LEFT;
                 swipeSlider.style.left = INITIAL_LEFT + 'px';
                 
-                // Actualizar estado visual sin usar updateSliderPosition
                 swipeButton.classList.remove('swipe-active');
                 swipeText.textContent = 'Deslizá para activar';
                 swipeInstruction.textContent = 'Deslizá hasta el final y mantené';

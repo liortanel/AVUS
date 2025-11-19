@@ -8,8 +8,8 @@
         .ToDictionary(g => g.Key, g => g.ToList());
 
     var primerDiaMes = new DateTime(year, month, 1);
-    int diaSemanaPrimer = (int)primerDiaMes.DayOfWeek; // 0=Sunday
-    int offset = (diaSemanaPrimer + 6) % 7; // Convertir a 0=Lunes
+    int diaSemanaPrimer = (int)primerDiaMes.DayOfWeek;
+    int offset = (diaSemanaPrimer + 6) % 7;
     int diasMes = DateTime.DaysInMonth(year, month);
     var prev = primerDiaMes.AddMonths(-1);
     var next = primerDiaMes.AddMonths(1);
