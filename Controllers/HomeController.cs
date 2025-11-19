@@ -410,4 +410,174 @@ public class HomeController : Controller
         }
         return RedirectToAction("Perfil");
     }
+
+    public IActionResult Emergencia()
+    {
+        if (!EstaLogueado())
+        {
+            return RedirectToAction("Login");
+        }
+        var dni = HttpContext.Session.GetString("UserDNI");
+        var avuId = BD.ObtenerAvuIdPorDni(dni!);
+        if (avuId == null)
+        {
+            return RedirectToAction("Login");
+        }
+        var contactoEmergencia = BD.ObtenerContactoEmergencia(avuId.Value);
+        ViewBag.ContactoEmergencia = contactoEmergencia;
+        return View("Emergencia");
+    }
+
+    [HttpPost]
+    public IActionResult ActivarEmergencia()
+    {
+        if (!EstaLogueado())
+        {
+            return Json(new { success = false, message = "No autorizado" });
+        }
+        var dni = HttpContext.Session.GetString("UserDNI");
+        var avuId = BD.ObtenerAvuIdPorDni(dni!);
+        if (avuId == null)
+        {
+            return Json(new { success = false, message = "Usuario no encontrado" });
+        }
+        var contactoEmergencia = BD.ObtenerContactoEmergencia(avuId.Value);
+        var datosPerfil = BD.DatosPerfil(dni!);
+        var nombreUsuario = $"{datosPerfil.GetValueOrDefault("nombre", "")} {datosPerfil.GetValueOrDefault("apellido", "")}".Trim();
+        
+        // Aquí se podría implementar la lógica para:
+        // 1. Llamar al SAMU (107 en Argentina)
+        // 2. Enviar mensaje al contacto de emergencia
+        
+        // Por ahora retornamos éxito con la información
+        return Json(new 
+        { 
+            success = true, 
+            message = "Emergencia activada",
+            contacto = contactoEmergencia,
+            nombreUsuario = nombreUsuario
+        });
+    }
+
+    public IActionResult Familia()
+    {
+        if (!EstaLogueado())
+        {
+            return RedirectToAction("Login");
+        }
+        var dni = HttpContext.Session.GetString("UserDNI");
+        var avuId = BD.ObtenerAvuIdPorDni(dni!);
+        if (avuId == null)
+        {
+            return RedirectToAction("Login");
+        }
+        var familiares = BD.ObtenerFamiliares(avuId.Value);
+        ViewBag.Familiares = familiares;
+        return View("Familia");
+    }
+
+    [HttpPost]
+    public IActionResult CrearFamiliar(string nombre, string? apellido, string numero, bool principal = false)
+    {
+        if (!EstaLogueado())
+        {
+            return RedirectToAction("Login");
+        }
+        var dni = HttpContext.Session.GetString("UserDNI");
+        var avuId = BD.ObtenerAvuIdPorDni(dni!);
+        if (avuId == null)
+        {
+            return RedirectToAction("Login");
+        }
+        if (string.IsNullOrWhiteSpace(nombre) || string.IsNullOrWhiteSpace(numero))
+        {
+            TempData["FamiliaError"] = "El nombre y el número son obligatorios.";
+            return RedirectToAction("Familia");
+        }
+        try
+        {
+            BD.CrearFamiliar(avuId.Value, nombre.Trim(), string.IsNullOrWhiteSpace(apellido) ? null : apellido.Trim(), numero.Trim(), principal);
+            TempData["FamiliaOk"] = "Contacto agregado correctamente.";
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error creando familiar");
+            TempData["FamiliaError"] = "No se pudo agregar el contacto.";
+        }
+        return RedirectToAction("Familia");
+    }
+
+    public IActionResult Chatear(int familiarId)
+    {
+        if (!EstaLogueado())
+        {
+            return RedirectToAction("Login");
+        }
+        var dni = HttpContext.Session.GetString("UserDNI");
+        var avuId = BD.ObtenerAvuIdPorDni(dni!);
+        if (avuId == null)
+        {
+            return RedirectToAction("Login");
+        }
+        var familiares = BD.ObtenerFamiliares(avuId.Value);
+        var familiar = familiares.FirstOrDefault(f => f.familiar_id == familiarId);
+        if (familiar == null)
+        {
+            TempData["FamiliaError"] = "Contacto no encontrado.";
+            return RedirectToAction("Familia");
+        }
+        // Redirigir a SMS usando el protocolo sms:
+        var numeroLimpio = familiar.numero.Replace(" ", "").Replace("-", "").Replace("(", "").Replace(")", "");
+        return Redirect($"sms:{numeroLimpio}");
+    }
+
+    public IActionResult Llamar(int familiarId)
+    {
+        if (!EstaLogueado())
+        {
+            return RedirectToAction("Login");
+        }
+        var dni = HttpContext.Session.GetString("UserDNI");
+        var avuId = BD.ObtenerAvuIdPorDni(dni!);
+        if (avuId == null)
+        {
+            return RedirectToAction("Login");
+        }
+        var familiares = BD.ObtenerFamiliares(avuId.Value);
+        var familiar = familiares.FirstOrDefault(f => f.familiar_id == familiarId);
+        if (familiar == null)
+        {
+            TempData["FamiliaError"] = "Contacto no encontrado.";
+            return RedirectToAction("Familia");
+        }
+        // Redirigir a llamada usando el protocolo tel:
+        var numeroLimpio = familiar.numero.Replace(" ", "").Replace("-", "").Replace("(", "").Replace(")", "");
+        return Redirect($"tel:{numeroLimpio}");
+    }
+
+    [HttpPost]
+    public IActionResult EliminarFamiliar(int familiarId)
+    {
+        if (!EstaLogueado())
+        {
+            return RedirectToAction("Login");
+        }
+        var dni = HttpContext.Session.GetString("UserDNI");
+        var avuId = BD.ObtenerAvuIdPorDni(dni!);
+        if (avuId == null)
+        {
+            return RedirectToAction("Login");
+        }
+        try
+        {
+            BD.EliminarFamiliar(familiarId, avuId.Value);
+            TempData["FamiliaOk"] = "Contacto eliminado correctamente.";
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error eliminando familiar");
+            TempData["FamiliaError"] = "No se pudo eliminar el contacto.";
+        }
+        return RedirectToAction("Familia");
+    }
 }

@@ -32,6 +32,16 @@ app.UseSession();
 app.UseAuthorization();
 
 app.MapControllerRoute(
+    name: "emergencia",
+    pattern: "Emergencia",
+    defaults: new { controller = "Home", action = "Emergencia" });
+
+app.MapControllerRoute(
+    name: "familia",
+    pattern: "Familia",
+    defaults: new { controller = "Home", action = "Familia" });
+
+app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 

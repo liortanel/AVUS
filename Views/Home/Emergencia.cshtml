@@ -1,0 +1,387 @@
+@{
+    ViewData["Title"] = "Emergencia";
+}
+
+<div class="emergencia-container">
+    <div class="emergencia-header">
+        <h1><i class="fas fa-exclamation-triangle"></i> Emergencia</h1>
+        <p>Deslizá y mantené el botón durante 3 segundos para activar la alerta</p>
+    </div>
+
+    <div class="emergencia-content">
+        <div class="emergencia-info">
+            <div class="info-card">
+                <i class="fas fa-phone-alt"></i>
+                <div>
+                    <h3>Llamar al SAME</h3>
+                    <p>Se llamará automáticamente al 107</p>
+                </div>
+            </div>
+            @if (ViewBag.ContactoEmergencia != null)
+            {
+                <div class="info-card">
+                    <i class="fas fa-user-friends"></i>
+                    <div>
+                        <h3>Contacto de Emergencia</h3>
+                        <p>@ViewBag.ContactoEmergencia</p>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="info-card info-card-warning">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <div>
+                        <h3>Sin Contacto de Emergencia</h3>
+                        <p>Configurá un contacto de emergencia en tu perfil</p>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="swipe-button-container">
+            <div class="swipe-button" id="swipeButton">
+                <div class="swipe-button-track">
+                    <div class="swipe-button-slider" id="swipeSlider">
+                        <i class="fas fa-arrow-right"></i>
+                    </div>
+                    <div class="swipe-button-text" id="swipeText">
+                        Deslizá para activar
+                    </div>
+                </div>
+                <div class="countdown-display" id="countdownDisplay"></div>
+            </div>
+            <div class="swipe-progress" id="swipeProgress">
+                <div class="swipe-progress-bar" id="swipeProgressBar"></div>
+            </div>
+            <p class="swipe-instruction" id="swipeInstruction">Mantené deslizado durante 3 segundos</p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const swipeButton = document.getElementById('swipeButton');
+            const swipeSlider = document.getElementById('swipeSlider');
+            const swipeText = document.getElementById('swipeText');
+            const swipeProgress = document.getElementById('swipeProgress');
+            const swipeProgressBar = document.getElementById('swipeProgressBar');
+            const swipeInstruction = document.getElementById('swipeInstruction');
+            const countdownDisplay = document.getElementById('countdownDisplay');
+
+            let isDragging = false;
+            let startX = 0;
+            let currentX = 0;
+            let sliderLeft = 5; // Posición inicial del CSS (left: 5px)
+            let startSliderLeft = 5; // Posición inicial del slider cuando comienza el arrastre
+            let holdTimer = null;
+            let progressTimer = null;
+            let countdownTimer = null;
+            let isActivated = false; // Prevenir múltiples activaciones
+            let isResetting = false; // Prevenir reset durante animación
+            const HOLD_TIME = 3000; // 3 segundos
+            const COUNTDOWN_TIME = 1000; // 1 segundo por número
+            const INITIAL_LEFT = 5; // Posición inicial del slider en CSS
+            const RIGHT_MARGIN = 5; // Margen derecho para que no llegue hasta el borde
+            let MAX_SLIDE = 0;
+            
+            // Calcular MAX_SLIDE después de que los elementos estén renderizados
+            function calculateMaxSlide() {
+                MAX_SLIDE = swipeButton.offsetWidth - swipeSlider.offsetWidth - INITIAL_LEFT - RIGHT_MARGIN;
+            }
+            
+            // Calcular al inicio y cuando cambie el tamaño
+            calculateMaxSlide();
+            window.addEventListener('resize', calculateMaxSlide);
+
+            function updateSliderPosition() {
+                if (isResetting || isActivated) return;
+                
+                // Asegurar que sliderLeft esté dentro de los límites
+                sliderLeft = Math.max(INITIAL_LEFT, Math.min(INITIAL_LEFT + MAX_SLIDE, sliderLeft));
+                swipeSlider.style.left = sliderLeft + 'px';
+                
+                // Calcular el porcentaje relativo a la posición inicial
+                const relativePosition = sliderLeft - INITIAL_LEFT;
+                const percentage = (relativePosition / MAX_SLIDE) * 100;
+                
+                if (relativePosition >= MAX_SLIDE * 0.8) {
+                    swipeButton.classList.add('swipe-active');
+                    swipeText.textContent = 'Mantené presionado';
+                    swipeInstruction.textContent = 'Mantené deslizado durante 3 segundos';
+                    
+                    // Solo iniciar el timer si no está corriendo y estamos arrastrando
+                    if (!progressTimer && isDragging && !isActivated) {
+                        startHoldTimer();
+                    }
+                } else {
+                    swipeButton.classList.remove('swipe-active');
+                    swipeText.textContent = 'Deslizá para activar';
+                    swipeInstruction.textContent = 'Deslizá hasta el final y mantené';
+                    stopHoldTimer();
+                    hideCountdown();
+                }
+            }
+
+            function startHoldTimer() {
+                if (isActivated || progressTimer) return; // Evitar múltiples timers
+                
+                let elapsed = 0;
+                const interval = 50; // Actualizar cada 50ms
+                let lastCountdownNumber = 0;
+                let countdownShown = false;
+                
+                swipeProgress.style.display = 'block';
+                swipeProgressBar.style.width = '0%';
+                hideCountdown();
+                
+                progressTimer = setInterval(() => {
+                    // Verificar si el usuario sigue arrastrando y está en la zona activa
+                    if (!isDragging || isResetting || isActivated) {
+                        clearInterval(progressTimer);
+                        progressTimer = null;
+                        stopHoldTimer();
+                        return;
+                    }
+                    
+                    const relativePosition = sliderLeft - INITIAL_LEFT;
+                    if (relativePosition < MAX_SLIDE * 0.8) {
+                        clearInterval(progressTimer);
+                        progressTimer = null;
+                        stopHoldTimer();
+                        return;
+                    }
+                    
+                    elapsed += interval;
+                    const progress = (elapsed / HOLD_TIME) * 100;
+                    swipeProgressBar.style.width = progress + '%';
+                    
+                    // Mostrar cuenta regresiva en los últimos 3 segundos
+                    const remaining = HOLD_TIME - elapsed;
+                    if (remaining <= COUNTDOWN_TIME * 3 && remaining > 0) {
+                        // Calcular el número de cuenta regresiva (3, 2, 1)
+                        // remaining: 3000-2001ms = 3, 2000-1001ms = 2, 1000-1ms = 1
+                        const countdownNumber = Math.min(3, Math.ceil(remaining / COUNTDOWN_TIME));
+                        // Solo actualizar si cambió el número y es válido
+                        if (countdownNumber !== lastCountdownNumber && countdownNumber <= 3 && countdownNumber >= 1) {
+                            lastCountdownNumber = countdownNumber;
+                            showCountdown(countdownNumber);
+                            countdownShown = true;
+                        }
+                    } else {
+                        if (countdownShown) {
+                            hideCountdown();
+                            lastCountdownNumber = 0;
+                            countdownShown = false;
+                        }
+                    }
+                    
+                    if (elapsed >= HOLD_TIME) {
+                        clearInterval(progressTimer);
+                        progressTimer = null;
+                        hideCountdown();
+                        if (!isActivated) {
+                            activateEmergency();
+                        }
+                    }
+                }, interval);
+            }
+            
+            function showCountdown(number) {
+                if (number < 1 || number > 3) return;
+                countdownDisplay.textContent = number;
+                countdownDisplay.style.display = 'block';
+                countdownDisplay.classList.add('countdown-visible');
+            }
+            
+            function hideCountdown() {
+                countdownDisplay.style.display = 'none';
+                countdownDisplay.classList.remove('countdown-visible');
+            }
+
+            function stopHoldTimer() {
+                if (progressTimer) {
+                    clearInterval(progressTimer);
+                    progressTimer = null;
+                }
+                if (countdownTimer) {
+                    clearInterval(countdownTimer);
+                    countdownTimer = null;
+                }
+                swipeProgress.style.display = 'none';
+                swipeProgressBar.style.width = '0%';
+                hideCountdown();
+            }
+
+            function activateEmergency() {
+                if (isActivated) return; // Prevenir múltiples activaciones
+                
+                isActivated = true;
+                stopHoldTimer();
+                hideCountdown();
+                
+                swipeButton.classList.add('swipe-complete');
+                swipeText.innerHTML = '<i class="fas fa-check"></i> Activando...';
+                swipeInstruction.textContent = 'Emergencia activada';
+                
+                // Enviar alerta al contacto de emergencia primero
+                fetch('/Home/ActivarEmergencia', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Enviar mensaje al contacto de emergencia si existe
+                        if (data.contacto) {
+                            const mensaje = encodeURIComponent(`🚨 ALERTA DE EMERGENCIA 🚨\n\n${data.nombreUsuario} ha activado una alerta de emergencia.\n\nPor favor, contactá inmediatamente.\n\nFecha: ${new Date().toLocaleString('es-AR')}`);
+                            // Usar setTimeout para evitar que se abran múltiples ventanas
+                            setTimeout(() => {
+                                window.location.href = `sms:${data.contacto}?body=${mensaje}`;
+                            }, 100);
+                        }
+                        
+                        // Llamar al SAME (107) después de un breve delay
+                        setTimeout(() => {
+                            window.location.href = 'tel:107';
+                        }, 200);
+                        
+                        // Resetear después de un tiempo
+                        setTimeout(() => {
+                            resetButton();
+                        }, 3000);
+                    } else {
+                        alert('Error al activar la emergencia: ' + data.message);
+                        isActivated = false;
+                        resetButton();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error al activar la emergencia. Por favor, intentá nuevamente.');
+                    isActivated = false;
+                    resetButton();
+                });
+            }
+
+            function resetButton() {
+                if (isResetting) return;
+                
+                isResetting = true;
+                isActivated = false;
+                isDragging = false;
+                stopHoldTimer();
+                hideCountdown();
+                
+                // Animar el reset suavemente a la posición inicial
+                swipeSlider.style.transition = 'left 0.4s ease-out';
+                sliderLeft = INITIAL_LEFT;
+                swipeSlider.style.left = INITIAL_LEFT + 'px';
+                
+                swipeButton.classList.remove('swipe-complete', 'swipe-active');
+                swipeText.textContent = 'Deslizá para activar';
+                swipeInstruction.textContent = 'Deslizá hasta el final y mantené';
+                
+                // Esperar a que termine la animación antes de permitir otro drag
+                setTimeout(() => {
+                    isResetting = false;
+                    swipeSlider.style.transition = '';
+                }, 400);
+            }
+
+            // Eventos táctiles (móvil)
+            swipeButton.addEventListener('touchstart', function(e) {
+                if (isResetting || isActivated) return;
+                isDragging = true;
+                startX = e.touches[0].clientX;
+                // Capturar la posición actual del slider como punto de inicio
+                startSliderLeft = parseInt(swipeSlider.style.left) || INITIAL_LEFT;
+                sliderLeft = startSliderLeft;
+                swipeButton.style.transition = 'none';
+            });
+
+            swipeButton.addEventListener('touchmove', function(e) {
+                if (!isDragging || isResetting || isActivated) return;
+                e.preventDefault();
+                currentX = e.touches[0].clientX;
+                const diff = currentX - startX;
+                // Calcular la nueva posición basada en la posición inicial del slider cuando comenzó el arrastre
+                const newLeft = startSliderLeft + diff;
+                sliderLeft = Math.max(INITIAL_LEFT, Math.min(INITIAL_LEFT + MAX_SLIDE, newLeft));
+                updateSliderPosition();
+            });
+
+            swipeButton.addEventListener('touchend', function(e) {
+                if (!isDragging || isActivated) return;
+                isDragging = false;
+                
+                // Siempre resetear cuando se suelta, a menos que ya esté activado
+                isResetting = true;
+                stopHoldTimer();
+                swipeSlider.style.transition = 'left 0.4s ease-out';
+                sliderLeft = INITIAL_LEFT;
+                swipeSlider.style.left = INITIAL_LEFT + 'px';
+                
+                // Actualizar estado visual sin usar updateSliderPosition
+                swipeButton.classList.remove('swipe-active');
+                swipeText.textContent = 'Deslizá para activar';
+                swipeInstruction.textContent = 'Deslizá hasta el final y mantené';
+                
+                setTimeout(() => {
+                    isResetting = false;
+                    swipeSlider.style.transition = '';
+                }, 400);
+            });
+
+            // Eventos de mouse (escritorio)
+            swipeButton.addEventListener('mousedown', function(e) {
+                if (isResetting || isActivated) return;
+                isDragging = true;
+                startX = e.clientX;
+                // Capturar la posición actual del slider como punto de inicio
+                startSliderLeft = parseInt(swipeSlider.style.left) || INITIAL_LEFT;
+                sliderLeft = startSliderLeft;
+                swipeButton.style.transition = 'none';
+                swipeButton.style.cursor = 'grabbing';
+            });
+
+            document.addEventListener('mousemove', function(e) {
+                if (!isDragging || isResetting || isActivated) return;
+                currentX = e.clientX;
+                const diff = currentX - startX;
+                // Calcular la nueva posición basada en la posición inicial del slider cuando comenzó el arrastre
+                const newLeft = startSliderLeft + diff;
+                sliderLeft = Math.max(INITIAL_LEFT, Math.min(INITIAL_LEFT + MAX_SLIDE, newLeft));
+                updateSliderPosition();
+            });
+
+            document.addEventListener('mouseup', function(e) {
+                if (!isDragging || isActivated) return;
+                isDragging = false;
+                swipeButton.style.cursor = '';
+                
+                // Siempre resetear cuando se suelta, a menos que ya esté activado
+                isResetting = true;
+                stopHoldTimer();
+                swipeSlider.style.transition = 'left 0.4s ease-out';
+                sliderLeft = INITIAL_LEFT;
+                swipeSlider.style.left = INITIAL_LEFT + 'px';
+                
+                // Actualizar estado visual sin usar updateSliderPosition
+                swipeButton.classList.remove('swipe-active');
+                swipeText.textContent = 'Deslizá para activar';
+                swipeInstruction.textContent = 'Deslizá hasta el final y mantené';
+                
+                setTimeout(() => {
+                    isResetting = false;
+                    swipeSlider.style.transition = '';
+                }, 400);
+            });
+        });
+    </script>
+}
+

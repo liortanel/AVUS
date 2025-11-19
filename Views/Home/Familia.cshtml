@@ -1,0 +1,637 @@
+@{
+    ViewData["Title"] = "Familia";
+    var familiares = ViewBag.Familiares as List<Familiar> ?? new List<Familiar>();
+}
+
+<div class="familia-container">
+    <div class="familia-header">
+        <h1><i class="fas fa-users"></i> Mis Contactos</h1>
+        <p>Gestioná tus contactos de familia y amigos</p>
+    </div>
+
+    <div class="familia-content">
+        @if (TempData["FamiliaOk"] != null)
+        {
+            <div class="alert alert-success">
+                <i class="fas fa-check-circle"></i> @TempData["FamiliaOk"]
+            </div>
+        }
+        @if (TempData["FamiliaError"] != null)
+        {
+            <div class="alert alert-error">
+                <i class="fas fa-exclamation-circle"></i> @TempData["FamiliaError"]
+            </div>
+        }
+
+        <div class="contactos-list">
+            @if (familiares.Any())
+            {
+                @foreach (var familiar in familiares)
+                {
+                    <div class="contacto-card" data-familiar-id="@familiar.familiar_id">
+                        <div class="contacto-info">
+                            <div class="contacto-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="contacto-details">
+                                <h3>
+                                    <span class="contacto-nombre">
+                                        @familiar.nombre@if (!string.IsNullOrWhiteSpace(familiar.apellido)) { <text> @familiar.apellido</text> }
+                                    </span>
+                                    @if (familiar.principal)
+                                    {
+                                        <span class="badge-principal"><i class="fas fa-star"></i> Principal</span>
+                                    }
+                                </h3>
+                                <p><i class="fas fa-phone"></i> @familiar.numero</p>
+                            </div>
+                        </div>
+                        <div class="contacto-actions" id="actions-@familiar.familiar_id" style="display: none;">
+                            <a href="/Home/Chatear?familiarId=@familiar.familiar_id" class="btn-action btn-chat">
+                                <i class="fas fa-comment"></i> Chatear
+                            </a>
+                            <a href="/Home/Llamar?familiarId=@familiar.familiar_id" class="btn-action btn-call">
+                                <i class="fas fa-phone"></i> Llamar
+                            </a>
+                            <form method="post" action="/Home/EliminarFamiliar" class="btn-action-form form-eliminar" data-familiar-id="@familiar.familiar_id" data-nombre="@familiar.nombre @(familiar.apellido ?? "")">
+                                <input type="hidden" name="familiarId" value="@familiar.familiar_id" />
+                                <button type="submit" class="btn-action btn-delete">
+                                    <i class="fas fa-trash"></i> Eliminar
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="empty-state">
+                    <i class="fas fa-users-slash"></i>
+                    <p>No tenés contactos agregados todavía</p>
+                    <p class="empty-state-subtitle">Agregá tu primer contacto usando el botón de abajo</p>
+                </div>
+            }
+        </div>
+
+        <div class="agregar-contacto-container">
+            <button type="button" class="btn-agregar-contacto" id="btnAgregarContacto">
+                <i class="fas fa-plus-circle"></i> Agregar Contacto
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para agregar contacto -->
+<div class="modal-overlay" id="modalAgregar" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2><i class="fas fa-user-plus"></i> Agregar Contacto</h2>
+            <button type="button" class="modal-close" id="btnCerrarModal">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <form method="post" action="/Home/CrearFamiliar" class="modal-form">
+            <div class="form-group">
+                <label for="nombre">
+                    <i class="fas fa-user"></i> Nombre <span class="required">*</span>
+                </label>
+                <input type="text" id="nombre" name="nombre" required placeholder="Ingresá el nombre" />
+            </div>
+            <div class="form-group">
+                <label for="apellido">
+                    <i class="fas fa-user"></i> Apellido
+                </label>
+                <input type="text" id="apellido" name="apellido" placeholder="Ingresá el apellido (opcional)" />
+            </div>
+            <div class="form-group">
+                <label for="numero">
+                    <i class="fas fa-phone"></i> Número <span class="required">*</span>
+                </label>
+                <input type="tel" id="numero" name="numero" required placeholder="Ej: +54 11 1234-5678" />
+            </div>
+            <div class="form-group checkbox-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="principal" name="principal" value="true" />
+                    <span>Marcar como contacto principal</span>
+                </label>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-cancelar" id="btnCancelar">Cancelar</button>
+                <button type="submit" class="btn-guardar">
+                    <i class="fas fa-save"></i> Guardar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const btnAgregar = document.getElementById('btnAgregarContacto');
+            const modal = document.getElementById('modalAgregar');
+            const btnCerrar = document.getElementById('btnCerrarModal');
+            const btnCancelar = document.getElementById('btnCancelar');
+            const contactoCards = document.querySelectorAll('.contacto-card');
+
+            // Abrir modal
+            btnAgregar.addEventListener('click', function() {
+                modal.style.display = 'flex';
+            });
+
+            // Cerrar modal
+            function cerrarModal() {
+                modal.style.display = 'none';
+                document.getElementById('nombre').value = '';
+                document.getElementById('apellido').value = '';
+                document.getElementById('numero').value = '';
+                document.getElementById('principal').checked = false;
+            }
+
+            btnCerrar.addEventListener('click', cerrarModal);
+            btnCancelar.addEventListener('click', cerrarModal);
+
+            // Cerrar al hacer click fuera del modal
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    cerrarModal();
+                }
+            });
+
+            // Mostrar/ocultar acciones al hacer click en un contacto
+            contactoCards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // No hacer nada si se clickeó en los botones de acción
+                    if (e.target.closest('.contacto-actions')) {
+                        return;
+                    }
+
+                    const familiarId = this.getAttribute('data-familiar-id');
+                    const actions = document.getElementById('actions-' + familiarId);
+                    const allActions = document.querySelectorAll('.contacto-actions');
+                    
+                    // Ocultar todas las acciones
+                    allActions.forEach(action => {
+                        if (action !== actions) {
+                            action.style.display = 'none';
+                        }
+                    });
+
+                    // Mostrar/ocultar las acciones del contacto clickeado
+                    if (actions.style.display === 'none' || actions.style.display === '') {
+                        actions.style.display = 'flex';
+                    } else {
+                        actions.style.display = 'none';
+                    }
+                });
+            });
+
+            // Ocultar acciones al hacer click fuera
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.contacto-card')) {
+                    document.querySelectorAll('.contacto-actions').forEach(action => {
+                        action.style.display = 'none';
+                    });
+                }
+            });
+
+            // Manejar confirmación de eliminación
+            const formsEliminar = document.querySelectorAll('.form-eliminar');
+            formsEliminar.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    const nombre = this.getAttribute('data-nombre') || '';
+                    const nombreLimpio = nombre.trim();
+                    if (!confirm('¿Estás seguro de que querés eliminar el contacto "' + nombreLimpio + '"?\n\nEsta acción no se puede deshacer.')) {
+                        e.preventDefault();
+                        return false;
+                    }
+                });
+            });
+        });
+    </script>
+}
+
+<style>
+    .familia-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+    }
+
+    .familia-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .familia-header h1 {
+        font-size: 2rem;
+        color: #0760BF;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .familia-header p {
+        color: #666;
+        font-size: 1rem;
+    }
+
+    .alert {
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .alert-error {
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+    }
+
+    .contactos-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .contacto-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.25rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+        box-sizing: border-box;
+        width: 100%;
+    }
+
+    .contacto-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        transform: translateY(-2px);
+        border-color: #0760BF;
+    }
+
+    .contacto-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .contacto-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #0760BF 0%, #0a7ae6 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    .contacto-details {
+        flex: 1;
+    }
+
+    .contacto-details h3 {
+        margin: 0 0 0.5rem 0;
+        color: #333;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .contacto-nombre {
+        display: inline;
+    }
+
+    .contacto-details p {
+        margin: 0;
+        color: #666;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .badge-principal {
+        background: #ffc107;
+        color: #333;
+        padding: 0.25rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+
+    .contacto-actions {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #eee;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .btn-action {
+        flex: 1;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        border: none;
+        text-decoration: none;
+        text-align: center;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        cursor: pointer;
+    }
+
+    .btn-chat {
+        background: #28a745;
+        color: white;
+    }
+
+    .btn-chat:hover {
+        background: #218838;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+    }
+
+    .btn-call {
+        background: #0760BF;
+        color: white;
+    }
+
+    .btn-call:hover {
+        background: #0650a0;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(7, 96, 191, 0.3);
+    }
+
+    .btn-action-form {
+        flex: 1;
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .btn-delete {
+        background: #dc3545;
+        color: white;
+        width: 100%;
+    }
+
+    .btn-delete:hover {
+        background: #c82333;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: #999;
+    }
+
+    .empty-state i {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    .empty-state p {
+        font-size: 1.1rem;
+        margin: 0.5rem 0;
+    }
+
+    .empty-state-subtitle {
+        font-size: 0.9rem;
+        color: #bbb;
+    }
+
+    .agregar-contacto-container {
+        text-align: center;
+        margin-top: 2rem;
+    }
+
+    .btn-agregar-contacto {
+        background: linear-gradient(135deg, #0760BF 0%, #0a7ae6 100%);
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        box-shadow: 0 4px 12px rgba(7, 96, 191, 0.3);
+    }
+
+    .btn-agregar-contacto:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(7, 96, 191, 0.4);
+    }
+
+    /* Modal */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        padding: 1rem;
+    }
+
+    .modal-content {
+        background: white;
+        border-radius: 12px;
+        width: 100%;
+        max-width: 500px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.5rem;
+        border-bottom: 1px solid #eee;
+    }
+
+    .modal-header h2 {
+        margin: 0;
+        color: #0760BF;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: #999;
+        cursor: pointer;
+        padding: 0.5rem;
+        transition: color 0.3s;
+    }
+
+    .modal-close:hover {
+        color: #333;
+    }
+
+    .modal-form {
+        padding: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #333;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .required {
+        color: #dc3545;
+    }
+
+    .form-group input[type="text"],
+    .form-group input[type="tel"] {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+        box-sizing: border-box;
+    }
+
+    .form-group input:focus {
+        outline: none;
+        border-color: #0760BF;
+    }
+
+    .checkbox-group {
+        margin-top: 1rem;
+    }
+
+    .checkbox-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        font-weight: normal;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+        width: auto;
+        cursor: pointer;
+    }
+
+    .modal-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .btn-cancelar,
+    .btn-guardar {
+        flex: 1;
+        padding: 0.75rem 1rem;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-cancelar {
+        background: #f0f0f0;
+        color: #333;
+    }
+
+    .btn-cancelar:hover {
+        background: #e0e0e0;
+    }
+
+    .btn-guardar {
+        background: #0760BF;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .btn-guardar:hover {
+        background: #0650a0;
+    }
+
+    @@media (max-width: 768px) {
+        .familia-container {
+            padding: 1rem 0.5rem;
+        }
+
+        .contacto-card {
+            padding: 1rem;
+            margin: 0;
+        }
+
+        .contacto-actions {
+            flex-direction: column;
+            gap: 0.5rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .btn-action {
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .btn-action-form {
+            width: 100%;
+            box-sizing: border-box;
+        }
+    }
+</style>
+

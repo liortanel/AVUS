@@ -7,7 +7,7 @@ using AVUS.Models;
 
 public static class BD
 {
-    private static string _connectionString = @"Server=localhost; DataBase=AVUS; Integrated Security=True; TrustServerCertificate=True;";
+    private static string _connectionString = @"Server=DESKTOP-D0RO1QD\SQLEXPRESS; DataBase=AVUS; Integrated Security=True; TrustServerCertificate=True;";
 
     public static SqlConnection ObtenerConexion()
     {
@@ -198,6 +198,47 @@ public static class BD
                           VALUES (@avuId, @especialidad, @medico, @dia, @hora);
                           SELECT CAST(SCOPE_IDENTITY() as int);";
             return connection.QuerySingle<int>(query, new { avuId, especialidad, medico, dia, hora });
+        }
+    }
+
+    public static string? ObtenerContactoEmergencia(int avuId)
+    {
+        using (SqlConnection connection = ObtenerConexion())
+        {
+            var query = @"SELECT contacto_principal FROM Emergencia WHERE avu_id = @avuId";
+            return connection.QuerySingleOrDefault<string?>(query, new { avuId });
+        }
+    }
+
+    public static List<Familiar> ObtenerFamiliares(int avuId)
+    {
+        using (SqlConnection connection = ObtenerConexion())
+        {
+            var query = @"SELECT familiar_id, avu_id, nombre, apellido, numero, principal
+                          FROM Familiar
+                          WHERE avu_id = @avuId
+                          ORDER BY principal DESC, nombre ASC";
+            return connection.Query<Familiar>(query, new { avuId }).ToList();
+        }
+    }
+
+    public static int CrearFamiliar(int avuId, string nombre, string? apellido, string numero, bool principal = false)
+    {
+        using (SqlConnection connection = ObtenerConexion())
+        {
+            var query = @"INSERT INTO Familiar (avu_id, nombre, apellido, numero, principal)
+                          VALUES (@avuId, @nombre, @apellido, @numero, @principal);
+                          SELECT CAST(SCOPE_IDENTITY() as int);";
+            return connection.QuerySingle<int>(query, new { avuId, nombre, apellido, numero, principal });
+        }
+    }
+
+    public static void EliminarFamiliar(int familiarId, int avuId)
+    {
+        using (SqlConnection connection = ObtenerConexion())
+        {
+            var query = @"DELETE FROM Familiar WHERE familiar_id = @familiarId AND avu_id = @avuId";
+            connection.Execute(query, new { familiarId, avuId });
         }
     }
 }
