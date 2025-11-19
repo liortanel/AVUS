@@ -9,7 +9,7 @@
             <img src="/img/AVUS.svg" alt="AVUS" />
         </div>
         @if(ViewBag.Error != null) {
-            <div class="alert alert-danger" style="text-align:center;">@ViewBag.Error</div>
+            <div class="alert alert-danger alert--center" role="alert" aria-live="assertive">@ViewBag.Error</div>
         }
         <form class="login-form" method="post" action="/Home/CompletarLogin">
             <h2>Iniciar Sesión</h2>
@@ -26,7 +26,7 @@
                     </button>
                 </div>
             </div>
-            <button type="submit" class="btn-login">Ingresar</button>
+            <button type="submit" class="btn btn-primary btn-block">Ingresar</button>
             <div class="register-link">
                 <p>¿No tienes cuenta? <a href="/Home/Register">Regístrate aquí</a></p>
             </div>

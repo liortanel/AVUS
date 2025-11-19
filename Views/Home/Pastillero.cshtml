@@ -23,21 +23,21 @@
         {
             <div class="card-footer" style="color:#27ae60">@TempData["PastilleroOk"]</div>
         }
-        <form method="post" action="@Url.Action("CrearPastilla", "Home")" class="row g-3">
-            <div class="col-12 col-md-4">
+        <form method="post" action="@Url.Action("CrearPastilla", "Home")" class="form-grid form-grid--inline">
+            <div class="form-field">
                 <label class="form-label">Nombre</label>
                 <input name="nombre" class="form-control" required />
             </div>
-            <div class="col-12 col-md-4">
+            <div class="form-field">
                 <label class="form-label">Dosis</label>
                 <input name="dosis" class="form-control" />
             </div>
-            <div class="col-12 col-md-3">
+            <div class="form-field">
                 <label class="form-label">Hora</label>
                 <input name="hora" type="time" class="form-control" />
             </div>
-            <div class="col-12 col-md-1 d-flex align-items-end">
-                <button type="submit" class="btn btn-primary w-100">Agregar</button>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Agregar</button>
             </div>
         </form>
     </div>

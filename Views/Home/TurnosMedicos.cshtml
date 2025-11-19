@@ -23,25 +23,25 @@
         {
             <div class="card-footer" style="color:#27ae60">@TempData["TurnoOk"]</div>
         }
-        <form method="post" action="@Url.Action("CrearTurno", "Home")" class="row g-3">
-            <div class="col-12 col-md-3">
+        <form method="post" action="@Url.Action("CrearTurno", "Home")" class="form-grid form-grid--inline">
+            <div class="form-field">
                 <label class="form-label">Especialidad</label>
                 <input name="especialidad" class="form-control" />
             </div>
-            <div class="col-12 col-md-3">
+            <div class="form-field">
                 <label class="form-label">Dr/ Dra</label>
                 <input name="medico" class="form-control" />
             </div>
-            <div class="col-12 col-md-2">
+            <div class="form-field">
                 <label class="form-label">Día</label>
                 <input name="dia" type="date" class="form-control" />
             </div>
-            <div class="col-12 col-md-2">
+            <div class="form-field">
                 <label class="form-label">Hora</label>
                 <input name="hora" type="time" class="form-control" />
             </div>
-            <div class="col-12 col-md-2 d-flex align-items-end">
-                <button type="submit" class="btn btn-primary w-100">Agregar</button>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Agregar</button>
             </div>
         </form>
     </div>

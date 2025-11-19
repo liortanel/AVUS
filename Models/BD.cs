@@ -7,7 +7,7 @@ using AVUS.Models;
 
 public static class BD
 {
-    private static string _connectionString = @"Server=DESKTOP-D0RO1QD\SQLEXPRESS; DataBase=AVUS; Integrated Security=True; TrustServerCertificate=True;";
+    private static string _connectionString = @"Server=localhost; DataBase=AVUS; Integrated Security=True; TrustServerCertificate=True;";
 
     public static SqlConnection ObtenerConexion()
     {

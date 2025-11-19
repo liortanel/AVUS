@@ -9,79 +9,79 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = AVUS
 build_property.RootNamespace = AVUS
-build_property.ProjectDir = C:\Users\usuario\AVUS\
+build_property.ProjectDir = C:\Users\49439407\Downloads\AVUS-1\
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
 build_property.RazorLangVersion = 8.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = C:\Users\usuario\AVUS
+build_property.MSBuildProjectDirectory = C:\Users\49439407\Downloads\AVUS-1
 build_property._RazorSourceGeneratorDebug = 
 
-[C:/Users/usuario/AVUS/Views/Home/Calendario.cshtml]
+[C:/Users/49439407/Downloads/AVUS-1/Views/Home/Calendario.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxDYWxlbmRhcmlvLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/usuario/AVUS/Views/Home/EditarCalendario.cshtml]
+[C:/Users/49439407/Downloads/AVUS-1/Views/Home/EditarCalendario.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxFZGl0YXJDYWxlbmRhcmlvLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/usuario/AVUS/Views/Home/Emergencia.cshtml]
+[C:/Users/49439407/Downloads/AVUS-1/Views/Home/Emergencia.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxFbWVyZ2VuY2lhLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/usuario/AVUS/Views/Home/Familia.cshtml]
+[C:/Users/49439407/Downloads/AVUS-1/Views/Home/Familia.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxGYW1pbGlhLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/usuario/AVUS/Views/Home/Index.cshtml]
+[C:/Users/49439407/Downloads/AVUS-1/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/usuario/AVUS/Views/Home/Login.cshtml]
+[C:/Users/49439407/Downloads/AVUS-1/Views/Home/Login.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxMb2dpbi5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/usuario/AVUS/Views/Home/Pastillero.cshtml]
+[C:/Users/49439407/Downloads/AVUS-1/Views/Home/Pastillero.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQYXN0aWxsZXJvLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/usuario/AVUS/Views/Home/Perfil.cshtml]
+[C:/Users/49439407/Downloads/AVUS-1/Views/Home/Perfil.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQZXJmaWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/usuario/AVUS/Views/Home/Register.cshtml]
+[C:/Users/49439407/Downloads/AVUS-1/Views/Home/Register.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxSZWdpc3Rlci5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/usuario/AVUS/Views/Home/Salud.cshtml]
+[C:/Users/49439407/Downloads/AVUS-1/Views/Home/Salud.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxTYWx1ZC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/usuario/AVUS/Views/Home/TurnosMedicos.cshtml]
+[C:/Users/49439407/Downloads/AVUS-1/Views/Home/TurnosMedicos.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxUdXJub3NNZWRpY29zLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/usuario/AVUS/Views/Home/Tutorial.cshtml]
+[C:/Users/49439407/Downloads/AVUS-1/Views/Home/Tutorial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxUdXRvcmlhbC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/usuario/AVUS/Views/Home/Tutoriales.cshtml]
+[C:/Users/49439407/Downloads/AVUS-1/Views/Home/Tutoriales.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxUdXRvcmlhbGVzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/usuario/AVUS/Views/Shared/_Layout.cshtml]
+[C:/Users/49439407/Downloads/AVUS-1/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/usuario/AVUS/Views/Shared/_ValidationScriptsPartial.cshtml]
+[C:/Users/49439407/Downloads/AVUS-1/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/usuario/AVUS/Views/_ViewImports.cshtml]
+[C:/Users/49439407/Downloads/AVUS-1/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/usuario/AVUS/Views/_ViewStart.cshtml]
+[C:/Users/49439407/Downloads/AVUS-1/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 

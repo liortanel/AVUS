@@ -19,64 +19,80 @@
 
 <div class="calendar-container">
     <div class="tutoriales-header">
-        <h1><i class="fas fa-calendar-alt"></i> Calendario</h1>
+        <h1><i class="fas fa-calendar-alt" aria-hidden="true"></i> Calendario</h1>
         <p>Visualizá tus eventos del mes y gestioná tus días</p>
     </div>
 
-    <div class="calendar-header" style="display:flex; align-items:center; justify-content:center; gap:1rem; margin:2rem 0;">
-        <a class="btn-login" style="width:3rem; height:3rem; display:flex; align-items:center; justify-content:center; padding:0;" href="/Home/Calendario?year=@prev.Year&month=@prev.Month">«</a>
-        <h2 style="margin:0; text-align:center; white-space:nowrap;">@tituloMes</h2>
-        <a class="btn-login" style="width:3rem; height:3rem; display:flex; align-items:center; justify-content:center; padding:0;" href="/Home/Calendario?year=@next.Year&month=@next.Month">»</a>
-    </div>
+    <section class="calendar-shell" aria-live="polite">
+        <div class="calendar-toolbar" role="group" aria-label="Cambiar mes">
+            <a class="btn btn-secondary btn-icon-only" href="/Home/Calendario?year=@prev.Year&month=@prev.Month" aria-label="Ver el mes anterior">
+                <span aria-hidden="true">«</span>
+            </a>
+            <h2 class="calendar-title" id="calendarTitle">@tituloMes</h2>
+            <a class="btn btn-secondary btn-icon-only" href="/Home/Calendario?year=@next.Year&month=@next.Month" aria-label="Ver el mes siguiente">
+                <span aria-hidden="true">»</span>
+            </a>
+        </div>
 
-    <table class="calendar-table" style="width:100%; border-collapse:collapse; table-layout:fixed;">
-        <thead>
-            <tr>
-                <th>Lun</th>
-                <th>Mar</th>
-                <th>Mié</th>
-                <th>Jue</th>
-                <th>Vie</th>
-                <th>Sáb</th>
-                <th>Dom</th>
-            </tr>
-        </thead>
-        <tbody>
+        <div class="calendar-weekdays" role="row">
+            <span class="calendar-weekday" role="columnheader">Lun</span>
+            <span class="calendar-weekday" role="columnheader">Mar</span>
+            <span class="calendar-weekday" role="columnheader">Mié</span>
+            <span class="calendar-weekday" role="columnheader">Jue</span>
+            <span class="calendar-weekday" role="columnheader">Vie</span>
+            <span class="calendar-weekday" role="columnheader">Sáb</span>
+            <span class="calendar-weekday" role="columnheader">Dom</span>
+        </div>
+
+        <div class="calendar-grid" role="grid" aria-labelledby="calendarTitle">
             @{
                 int dia = 1;
                 for (int fila = 0; fila < 6; fila++)
                 {
-                    <tr>
-                        @for (int col = 0; col < 7; col++)
+                    for (int col = 0; col < 7; col++)
+                    {
+                        if (fila == 0 && col < offset || dia > diasMes)
                         {
-                            if (fila == 0 && col < offset || dia > diasMes)
-                            {
-                                <td style="padding:0.5rem; border:1px solid #eee; background:#fafafa; height:110px; overflow:hidden;"></td>
-                            }
-                            else
-                            {
-                                var fechaActual = new DateTime(year, month, dia);
-                                bool tieneEventos = eventosPorDia.ContainsKey(fechaActual.Date);
-                                <td style="padding:0.5rem; border:1px solid #eee; vertical-align:top; height:110px; overflow:hidden;">
-                                    <a href="/Home/EditarCalendario?fecha=@fechaActual.ToString("yyyy-MM-dd")" class="action-btn" style="display:block; text-align:left;">
-                                        <div style="font-weight:bold;">@dia</div>
-                                        @{ var lista = tieneEventos ? eventosPorDia[fechaActual.Date] : new List<Evento>(); var primero = lista.FirstOrDefault(); }
-                                        <div style="margin-top:0.25rem; font-size:0.85rem; color:#0760BF; height:36px; display:flex; flex-direction:column; gap:2px; overflow:hidden;">
-                                            <div style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; @((primero == null) ? "visibility:hidden;" : "")">
-                                                <i class="fas fa-circle" style="font-size:0.5rem; margin-right:0.25rem;"></i>@(primero?.nombre)
-                                            </div>
-                                            <div style="@((lista.Count > 1) ? "" : "visibility:hidden;")">+@((lista.Count > 1) ? (lista.Count - 1) : 0) más</div>
-                                        </div>
-                                    </a>
-                                </td>
-                                dia++;
-                            }
+                            <div class="calendar-day calendar-day--empty" aria-hidden="true"></div>
                         }
-                    </tr>
+                        else
+                        {
+                            var fechaActual = new DateTime(year, month, dia);
+                            bool tieneEventos = eventosPorDia.ContainsKey(fechaActual.Date);
+                            var lista = tieneEventos ? eventosPorDia[fechaActual.Date] : new List<Evento>();
+                            var primero = lista.FirstOrDefault();
+                            var extra = Math.Max(lista.Count - 1, 0);
+                            var esHoy = fechaActual.Date == DateTime.Today;
+                            var descripcionEventos = tieneEventos
+                                ? $"{lista.Count} evento{(lista.Count > 1 ? "s" : string.Empty)}: {string.Join(", ", lista.Select(e => e.nombre))}"
+                                : "sin eventos programados";
+                            var cellClasses = "calendar-day"
+                                + (esHoy ? " calendar-day--today" : string.Empty)
+                                + (tieneEventos ? " calendar-day--has-events" : string.Empty);
+
+                            <div class="@cellClasses" role="gridcell" aria-label=$"Día {dia} de {tituloMes}: {descripcionEventos}">
+                                <a href="/Home/EditarCalendario?fecha=@fechaActual.ToString("yyyy-MM-dd")"
+                                   class="calendar-day-link"
+                                   aria-label=$"Gestionar eventos del {fechaActual:dd 'de' MMMM}">
+                                    <span class="calendar-day-number">@dia</span>
+                                    <div class="calendar-day-events">
+                                        @if (primero != null)
+                                        {
+                                            <span class="calendar-day-event">@primero.nombre</span>
+                                        }
+                                        @if (extra > 0)
+                                        {
+                                            <span class="calendar-day-more">+@extra más</span>
+                                        }
+                                    </div>
+                                </a>
+                            </div>
+                            dia++;
+                        }
+                    }
                 }
             }
-        </tbody>
-    </table>
-
+        </div>
+    </section>
 </div>
 

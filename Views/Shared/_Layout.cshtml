@@ -94,25 +94,25 @@
         </nav>
 
         <!-- Header -->
-        <header>
+        <header class="main-header" role="banner">
             <div class="header-content">
                 <div class="header-left">
-                    <button class="menu-toggle" id="menuToggle">
-                        <i class="fas fa-bars"></i>
+                    <button type="button" class="menu-toggle" id="menuToggle" aria-label="Abrir menú principal" aria-controls="sidebar">
+                        <i class="fas fa-bars" aria-hidden="true"></i>
                     </button>
                 </div>
                 <div class="header-center">
-                    <a href="/" class="site-logo">
+                    <a href="/" class="site-logo" aria-label="Volver al inicio de AVUS">
                         <img src="/img/AVUS.svg" alt="AVUS">
                     </a>
                 </div>
                 <div class="header-right">
-                    <button class="notification-btn" id="notificationBtn">
-                        <i class="fas fa-bell"></i>
-                        <span class="notification-badge">3</span>
+                    <button type="button" class="notification-btn header-icon-btn" id="notificationBtn" aria-label="Ver notificaciones">
+                        <i class="fas fa-bell" aria-hidden="true"></i>
+                        <span class="notification-badge" aria-live="polite">3</span>
                     </button>
-                    <button class="avatar-btn" id="avatarBtn">
-                        <i class="fas fa-user-circle avatar-img"></i>
+                    <button type="button" class="avatar-btn header-icon-btn" id="avatarBtn" aria-label="Abrir perfil">
+                        <i class="fas fa-user-circle avatar-img" aria-hidden="true"></i>
                     </button>
                 </div>
             </div>
