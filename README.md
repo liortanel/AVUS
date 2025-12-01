@@ -54,6 +54,4 @@ Publicar en servidor o cloud (Azure, AWS, Railway).
 
 8. 👥 Equipo y Contacto
 
-Nombre – Rol – Contacto
-
-Lior Tanel, Ciro Ranieli, Federico Ajami, Lucas Dorin
+Lior Tanel (Desarrollador Full-Stack), Ciro Ranieli (Proyect Leadear), Federico Ajami (Diseño), Lucas Dorin (Desarrollador Front-End)
